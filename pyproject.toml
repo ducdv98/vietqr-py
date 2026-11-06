@@ -9,6 +9,7 @@ addopts = "--import-mode=importlib"
 
 [tool.ruff]
 line-length = 100
+src = ["packages/*/src"]
 
 [dependency-groups]
 dev = [
