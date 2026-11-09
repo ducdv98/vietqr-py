@@ -27,8 +27,8 @@ def decode_tlv(text: str) -> dict[str, str]:
         header_end = index + 4
         if header_end > len(text):
             raise ValueError(f"Truncated TLV header at position {index}")
-        tag = text[index:index + 2]
-        length_text = text[index + 2:header_end]
+        tag = text[index : index + 2]
+        length_text = text[index + 2 : header_end]
         if not _is_two_digits(tag):
             raise ValueError(f"Invalid TLV tag {tag!r} at position {index}")
         if not _is_two_digits(length_text):
