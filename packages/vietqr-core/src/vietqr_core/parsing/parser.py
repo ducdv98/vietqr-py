@@ -92,7 +92,7 @@ def parse_payload(
 
     return VietQrInfo(
         bank_bin=bank_bin,
-        bank_info=catalog.get(bank_bin),
+        bank_info=catalog.find(bank_bin),
         account_no=account_no,
         service_type=service_type,
         qr_type=qr_type,
