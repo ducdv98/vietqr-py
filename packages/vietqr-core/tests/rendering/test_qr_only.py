@@ -5,7 +5,8 @@ from PIL import Image
 
 from vietqr_core.emv.payload import build_payload
 from vietqr_core.emv.request import VietQrRequest
-from vietqr_core.rendering.qr_only import MAX_SIZE, build_matrix, render_qr_png
+from vietqr_core.rendering.matrix import build_matrix
+from vietqr_core.rendering.qr_only import MAX_SIZE, render_qr_png
 
 PAYLOAD = build_payload(VietQrRequest("970422", "0123456789", amount=50000, description="hello"))
 
