@@ -4,6 +4,7 @@ import re
 from decimal import Decimal
 from types import MappingProxyType
 
+from vietqr_core.banks.catalog import BankCatalog, default_catalog
 from vietqr_core.emv.crc import verify_crc
 from vietqr_core.emv.enums import QrType, ServiceType
 from vietqr_core.emv.payload import NAPAS_AID
@@ -40,6 +41,7 @@ def parse_payload(
     *,
     strict_crc: bool = True,
     max_length: int = DEFAULT_MAX_PAYLOAD_LENGTH,
+    catalog: BankCatalog | None = None,
 ) -> VietQrInfo:
     if not text.strip():
         raise InvalidPayloadError("Payload is empty")
@@ -85,8 +87,12 @@ def parse_payload(
         except ValueError:
             additional = {}
 
+    if catalog is None:
+        catalog = default_catalog()
+
     return VietQrInfo(
         bank_bin=bank_bin,
+        bank_info=catalog.get(bank_bin),
         account_no=account_no,
         service_type=service_type,
         qr_type=qr_type,

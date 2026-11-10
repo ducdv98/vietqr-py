@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from decimal import Decimal
 
+from vietqr_core.banks.models import BankInfo
 from vietqr_core.emv.enums import QrType, ServiceType
 
 
@@ -16,6 +17,7 @@ class VietQrInfo:
     is_valid_crc: bool
     raw_payload: str
     raw_tags: Mapping[str, str]
+    bank_info: BankInfo | None = None
     amount: Decimal | None = None
     currency: str | None = None
     country_code: str | None = None

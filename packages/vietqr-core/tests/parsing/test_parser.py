@@ -2,6 +2,8 @@ from decimal import Decimal
 
 import pytest
 
+from vietqr_core.banks.catalog import InMemoryBankCatalog
+from vietqr_core.banks.models import BankInfo
 from vietqr_core.emv.crc import generate_crc_code
 from vietqr_core.emv.enums import QrType, ServiceType
 from vietqr_core.emv.payload import build_beneficiary, build_merchant_info, build_payload
@@ -217,3 +219,59 @@ def test_round_trip(request_):
     assert info.amount == (None if request_.amount is None else Decimal(request_.amount))
     assert info.bill_number == request_.bill_number
     assert info.is_valid_crc
+
+def test_bank_info_is_looked_up_in_the_default_catalog():
+    info = parse_payload(STATIC_CARD)
+    assert info.bank_info is not None
+    assert info.bank_info.bin == "970403"
+    assert info.bank_info.code == "STB"
+
+
+def test_unknown_bin_gives_no_bank_info():
+    info = parse_payload(build_payload(VietQrRequest("999999", "123")))
+    assert info.bank_bin == "999999"
+    assert info.bank_info is None
+
+
+def test_custom_catalog_is_used_instead_of_the_default():
+    fake_bank = BankInfo("970403", "FAKE", "FakeBank", "Fake bank", "")
+    info = parse_payload(STATIC_CARD, catalog=InMemoryBankCatalog([fake_bank]))
+    assert info.bank_info is fake_bank
+
+
+def test_bank_info_is_looked_up_in_the_default_catalog():
+    info = parse_payload(STATIC_CARD)
+    assert info.bank_info is not None
+    assert info.bank_info.bin == "970403"
+    assert info.bank_info.code == "STB"
+
+
+def test_unknown_bin_gives_no_bank_info():
+    info = parse_payload(build_payload(VietQrRequest("999999", "123")))
+    assert info.bank_bin == "999999"
+    assert info.bank_info is None
+
+
+def test_custom_catalog_is_used_instead_of_the_default():
+    fake_bank = BankInfo("970403", "FAKE", "FakeBank", "Fake bank", "")
+    info = parse_payload(STATIC_CARD, catalog=InMemoryBankCatalog([fake_bank]))
+    assert info.bank_info is fake_bank
+
+
+class RecordingCatalog:
+    def __init__(self):
+        self.keys = []
+
+    def find(self, key):
+        self.keys.append(key)
+        return None
+
+    def all_banks(self):
+        return ()
+
+
+def test_any_object_with_the_right_methods_works_as_a_catalog():
+    catalog = RecordingCatalog()
+    info = parse_payload(STATIC_CARD, catalog=catalog)
+    assert catalog.keys == ["970403"]
+    assert info.bank_info is None
