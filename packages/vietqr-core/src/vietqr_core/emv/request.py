@@ -14,7 +14,7 @@ class VietQrRequest:
     service_type: ServiceType = ServiceType.ACCOUNT
     bill_number: str | None = None
     qr_type: QrType | None = None
-    
+
     @property
     def effective_qr_type(self) -> QrType:
         if self.qr_type is not None:
