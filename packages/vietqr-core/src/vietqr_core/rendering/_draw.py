@@ -9,6 +9,12 @@ MAX_LOGO_PIXELS = 4_000_000
 type Box = tuple[int, int, int, int]
 
 
+def encode_png(image: Image.Image) -> bytes:
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    return buffer.getvalue()
+
+
 def decode_image(data: bytes) -> Image.Image | None:
     try:
         with Image.open(io.BytesIO(data)) as image:
