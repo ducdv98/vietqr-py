@@ -1,7 +1,9 @@
 """Building blocks of a VietQR payload (NAPAS247 / EMVCo)."""
 
 from vietqr_core._internal.diacritics import normalize
-from vietqr_core.emv.enums import ServiceType
+from vietqr_core.emv.crc import generate_crc_code
+from vietqr_core.emv.enums import QrType, ServiceType
+from vietqr_core.emv.request import VietQrRequest
 from vietqr_core.emv.tlv import encode_tlv
 from vietqr_core.errors import VietQrError
 
@@ -13,6 +15,11 @@ MAX_ADDITIONAL_FIELD_LENGTH = 25
 MAX_MERCHANT_NAME_LENGTH = 25
 MAX_MERCHANT_CITY_LENGTH = 15
 DEFAULT_MERCHANT_CITY = "HANOI"
+
+PAYLOAD_FORMAT_INDICATOR = "000201"
+CURRENCY_VND = "5303704"
+COUNTRY_VN = "5802VN"
+CRC_PLACEHOLDER = "6304"
 
 
 def _is_ascii_digits(text: str) -> bool:
@@ -71,3 +78,24 @@ def build_merchant_info(name: str | None, city: str | None = DEFAULT_MERCHANT_CI
     return encode_tlv("59", _clean_text(name, MAX_MERCHANT_NAME_LENGTH).upper()) + encode_tlv(
         "60", _clean_text(city, MAX_MERCHANT_CITY_LENGTH).upper()
     )
+
+
+def build_payload(request: VietQrRequest) -> str:
+    qr_type = request.effective_qr_type
+    if qr_type is QrType.DYNAMIC and (request.amount is None or request.amount <= 0):
+        raise VietQrError("A dynamic QR code requires an amount greater than 0")
+
+    content = (
+        PAYLOAD_FORMAT_INDICATOR
+        + encode_tlv("01", qr_type)
+        + build_beneficiary(request.bin_code, request.account_no, request.service_type)
+        + CURRENCY_VND
+        + build_amount(request.amount)
+        + COUNTRY_VN
+        + build_additional_data(
+            purpose=request.description,
+            bill_number=request.bill_number,
+        )
+        + CRC_PLACEHOLDER
+    )
+    return content + generate_crc_code(content)
