@@ -11,7 +11,7 @@ from vietqr_api.errors import (
     handle_validation_error,
 )
 from vietqr_api.middleware import CORRELATION_HEADER, SecurityHeadersMiddleware
-from vietqr_api.routes import banks, health, parse, qr
+from vietqr_api.routes import banks, decode, health, parse, qr
 from vietqr_api.settings import Settings
 from vietqr_core.banks.catalog import BankCatalog, default_catalog
 from vietqr_core.rendering.assets import DirectoryAssetProvider
@@ -31,6 +31,7 @@ def create_app(settings: Settings | None = None, catalog: BankCatalog | None = N
         redoc_url=redoc_url,
         openapi_url=openapi_url,
     )
+    app.state.settings = settings
     app.state.catalog = catalog or default_catalog()
 
     app.state.assets = (
@@ -44,6 +45,7 @@ def create_app(settings: Settings | None = None, catalog: BankCatalog | None = N
     app.include_router(qr.router)
     app.include_router(parse.router)
     app.include_router(banks.router)
+    app.include_router(decode.router)
     app.include_router(health.router)
 
     # The last middleware added is the outermost one, so the security headers are applied to

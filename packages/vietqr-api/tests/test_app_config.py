@@ -12,7 +12,14 @@ DOC_PATHS = ["/docs", "/redoc", "/openapi.json"]
 
 @pytest.fixture(autouse=True)
 def clean_environment(monkeypatch: pytest.MonkeyPatch) -> None:
-    for name in ("ASSETS_DIR", "HOST", "PORT", "DOCS_ENABLED"):
+    for name in (
+        "ASSETS_DIR",
+        "HOST",
+        "PORT",
+        "DOCS_ENABLED",
+        "MAX_UPLOAD_BYTES",
+        "MAX_IMAGE_PIXELS",
+    ):
         monkeypatch.delenv(f"VIETQR_{name}", raising=False)
 
 
@@ -21,21 +28,37 @@ def test_settings_defaults() -> None:
     assert settings.host == "127.0.0.1"
     assert settings.port == 8000
     assert settings.docs_enabled is True
+    assert settings.max_upload_bytes == 8 * 1024 * 1024
+    assert settings.max_image_pixels == 25_000_000
 
 
 def test_settings_read_the_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("VIETQR_HOST", "0.0.0.0")
     monkeypatch.setenv("VIETQR_PORT", "9100")
     monkeypatch.setenv("VIETQR_DOCS_ENABLED", "false")
+    monkeypatch.setenv("VIETQR_MAX_UPLOAD_BYTES", "2048")
+    monkeypatch.setenv("VIETQR_MAX_IMAGE_PIXELS", "4096")
     settings = Settings()
     assert settings.host == "0.0.0.0"
     assert settings.port == 9100
     assert settings.docs_enabled is False
+    assert settings.max_upload_bytes == 2048
+    assert settings.max_image_pixels == 4096
 
 
 @pytest.mark.parametrize("port", ["0", "70000", "abc"])
 def test_invalid_ports_are_rejected(monkeypatch: pytest.MonkeyPatch, port: str) -> None:
     monkeypatch.setenv("VIETQR_PORT", port)
+    with pytest.raises(ValidationError):
+        Settings()
+
+
+@pytest.mark.parametrize("name", ["MAX_UPLOAD_BYTES", "MAX_IMAGE_PIXELS"])
+@pytest.mark.parametrize("value", ["0", "-1", "abc"])
+def test_invalid_limits_are_rejected(
+    monkeypatch: pytest.MonkeyPatch, name: str, value: str
+) -> None:
+    monkeypatch.setenv(f"VIETQR_{name}", value)
     with pytest.raises(ValidationError):
         Settings()
 

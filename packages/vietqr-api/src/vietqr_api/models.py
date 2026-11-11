@@ -45,6 +45,12 @@ class ParseRequest(_CamelModel):
     qr_code: str | None = None
 
 
+class DecodeRequest(_CamelModel):
+    """JSON body of POST /decode: a Base64 string or a Data URL."""
+
+    image_base64: str | None = None
+
+
 class GenerateResult(_CamelModel):
     qr_code: str
     qr_data_url: str = Field(alias="qrDataURL")
