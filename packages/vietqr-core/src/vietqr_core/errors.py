@@ -25,3 +25,9 @@ class NotVietQrError(VietQrError):
     """Valid EMVCo data, but not a VietQR payment code."""
 
     code: ClassVar[str] = "qr.not_vietqr"
+
+
+class ImageDecodeError(VietQrError):
+    """The image cannot be read, is too large, or contains no QR code."""
+
+    code: ClassVar[str] = "qr.image_decode_failed"

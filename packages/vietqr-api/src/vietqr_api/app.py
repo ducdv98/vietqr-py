@@ -57,4 +57,3 @@ def create_app(settings: Settings | None = None, catalog: BankCatalog | None = N
     )
     app.add_middleware(SecurityHeadersMiddleware)
     return app
-    return app

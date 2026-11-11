@@ -14,7 +14,6 @@ dev = [
     { name = "mypy", specifier = ">=2.4.1" },
     { name = "pytest", specifier = ">=9.2.0" },
     { name = "ruff", specifier = ">=0.17.4" },
-    { name = "zxing-cpp", specifier = ">=3.1.1" },
 ]
 
 [[package]]
@@ -547,12 +546,14 @@ source = { editable = "packages/vietqr-core" }
 dependencies = [
     { name = "pillow" },
     { name = "segno" },
+    { name = "zxing-cpp" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "pillow", specifier = ">=13.0.0" },
     { name = "segno", specifier = ">=1.6.6" },
+    { name = "zxing-cpp", specifier = ">=3.1.1" },
 ]
 
 [[package]]
