@@ -1,5 +1,3 @@
-"""Runtime configuration for the API, read from VIETQR_* environment variables."""
-
 from pathlib import Path
 
 from pydantic import Field
@@ -20,7 +18,6 @@ class Settings(BaseSettings):
 
     ``max_upload_bytes`` caps the request body of POST /decode, and ``max_image_pixels`` caps
     the decoded size of the image inside it.
-    (add as a new paragraph at the end of the class docstring)
     """
 
     model_config = SettingsConfigDict(env_prefix="VIETQR_", frozen=True)
