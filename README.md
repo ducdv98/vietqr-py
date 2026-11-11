@@ -157,20 +157,23 @@ Environment variables, read when the server starts:
 | :-- | :-- | :-- |
 | `VIETQR_HOST` | `127.0.0.1` | Interface to bind. Loopback by default so a dev server is not exposed by accident. |
 | `VIETQR_PORT` | `8000` | Port to listen on (1-65535). |
-| `VIETQR_ASSETS_DIR` | unset | Directory with brand assets (see below). Unset: synthetic logos and the built-in font. |
+| `VIETQR_ASSETS_DIR` | unset | Directory with brand assets (see below). Unset: cards render without logos. |
 | `VIETQR_DOCS_ENABLED` | `true` | Serve `/docs`, `/redoc` and `/openapi.json`. |
 | `VIETQR_MAX_UPLOAD_BYTES` | `8388608` (8 MiB) | Maximum request body of `POST /decode`; larger bodies get 413. |
 | `VIETQR_MAX_IMAGE_PIXELS` | `25000000` | Maximum decoded size (width x height) of an uploaded image. |
 
-The library ships no brand images and no font. To use real ones, point `VIETQR_ASSETS_DIR` at a
-directory laid out as:
+The `vietqr-core` library ships no brand images. The API's brand images live in
+`packages/vietqr-api/assets/` (the Docker image sets `VIETQR_ASSETS_DIR` to them). To use your own,
+point `VIETQR_ASSETS_DIR` at a directory laid out as:
 
 ```text
 vietqr.png
+vietqr_icon.png
 napas247.png
 logos/<BIN>.png
-fonts/...
 ```
+
+Every file is optional; a missing one is skipped.
 
 ## Error codes
 
@@ -198,8 +201,9 @@ curl http://127.0.0.1:8080/health
 ```
 
 The image listens on `0.0.0.0:8080` (set through `VIETQR_HOST` and `VIETQR_PORT`) and runs as an
-unprivileged user with uid 10001. To use brand assets, mount them read-only; the directory must be
-readable by that uid:
+unprivileged user with uid 10001. The image bundles `packages/vietqr-api/assets/` at `/app/assets`
+and sets `VIETQR_ASSETS_DIR` to it. To use your own brand assets instead, mount them read-only; the
+directory must be readable by that uid:
 
 ```bash
 docker run --rm -p 8080:8080 \
@@ -231,7 +235,9 @@ The same commands run in CI (`.github/workflows/ci.yml`).
 
 ## Disclaimer
 
-`VietQR` and `NAPAS247` are trademarks of NAPAS (Vietnam National Payment Corporation). This is an
+`VietQR` and `NAPAS247` are trademarks of NAPAS (Vietnam National Payment Corporation). The VietQR,
+NAPAS247 and bank logos in `packages/vietqr-api/assets/` belong to their respective owners and are
+not covered by the MIT license. This is an
 independent open-source project, not an official NAPAS product, and the payload format follows
 NAPAS's public specification and EMVCo's QR specification. The software is provided "as is": whoever
 deploys it is responsible for the accuracy of the payment data (bank code, account number, amount)

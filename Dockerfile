@@ -18,7 +18,9 @@ FROM python:3.15-slim AS runtime
 RUN useradd --system --uid 10001 --no-create-home app
 WORKDIR /app
 COPY --from=build /app/.venv /app/.venv
+COPY packages/vietqr-api/assets /app/assets
 ENV PATH="/app/.venv/bin:$PATH" \
+    VIETQR_ASSETS_DIR=/app/assets \
     VIETQR_HOST=0.0.0.0 \
     VIETQR_PORT=8080 \
     PYTHONUNBUFFERED=1
