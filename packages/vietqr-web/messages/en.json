@@ -13,6 +13,14 @@
     "language": "Language",
     "toggleTheme": "Dark theme"
   },
+  "Status": {
+    "label": "API status",
+    "up": "API online · v{version}",
+    "upNoVersion": "API online",
+    "down": "API unreachable",
+    "checking": "Checking API…",
+    "outdated": "API v{apiVersion} is older than the client expects (v{expected}). Some features may not work."
+  },
   "Home": {
     "placeholder": "Studio placeholder (default Template: {template})."
   },
@@ -22,14 +30,41 @@
     "desc": "Description",
     "correlationId": "Correlation ID",
     "codes": {
+      "99": "Something went wrong on our side or the service is unreachable. Please try again later.",
       "01": "Some required information is missing. Fill in all fields and try again.",
       "02": "The amount is not valid. Enter a whole number of VND within the allowed range.",
       "03": "One of the values is not valid. Check your input and try again.",
       "04": "We could not find that bank. Choose a bank from the list.",
       "05": "That option is not supported.",
       "06": "We could not read a QR code from that image. Try a clearer, larger image.",
-      "07": "The QR content is not a valid VietQR payload.",
-      "99": "Something went wrong on our side or the service is unreachable. Please try again later."
+      "07": "The QR content is not a valid VietQR payload."
+    }
+  },
+  "Banks": {
+    "title": "Banks",
+    "intro": "Banks supported by VietQR. Pick one to start a QR in Studio.",
+    "searchLabel": "Search banks",
+    "searchHint": "Search by name, short name, code or BIN",
+    "count": "{count, plural, one {# bank} other {# banks}}",
+    "noResults": "No banks match “{query}”.",
+    "loading": "Loading banks…",
+    "retry": "Try again",
+    "listLabel": "Banks",
+    "openInStudio": "Create QR in Studio",
+    "openInStudioFor": "Create QR with {name} in Studio",
+    "viewDetails": "Details",
+    "back": "All banks",
+    "fields": {
+      "name": "Full name",
+      "shortName": "Short name",
+      "code": "Code",
+      "bin": "BIN"
+    },
+    "picker": {
+      "placeholder": "Choose a bank",
+      "noResults": "No matching banks",
+      "loading": "Loading banks…",
+      "clear": "Clear bank"
     }
   }
 }

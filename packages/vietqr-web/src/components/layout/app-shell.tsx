@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { getNavItems } from "@/config/nav";
 import type { AppConfig } from "@/lib/config/parse";
+import { StatusFooter } from "@/components/status/status-footer";
 import { LocaleSwitcher } from "./locale-switcher";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -60,7 +61,9 @@ export function AppShell({
               </a>
             ))}
           </nav>
-          {/* Status footer (/health) is added by a follow-up ticket. */}
+          <div className="ml-auto">
+            <StatusFooter />
+          </div>
         </div>
       </footer>
     </div>

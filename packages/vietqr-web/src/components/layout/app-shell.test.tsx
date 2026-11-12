@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { describe, expect, it, vi } from "vitest";
@@ -8,6 +9,10 @@ import { ConfigProvider } from "@/lib/config";
 import { AppShell } from "./app-shell";
 
 vi.mock("@/i18n/actions", () => ({ setLocale: vi.fn() }));
+vi.mock("@/lib/api/client", () => ({
+  api: { GET: () => new Promise(() => {}) },
+  unwrap: (p: Promise<unknown>) => p,
+}));
 
 const cfg = (extra: Record<string, string> = {}) =>
   parseConfig({ VIETQR_API_URL: "http://api:8000", ...extra });
@@ -22,7 +27,9 @@ function renderShell(
       messages={locale === "en" ? en : vi_}
     >
       <ConfigProvider config={config}>
-        <AppShell config={config}>x</AppShell>
+        <QueryClientProvider client={new QueryClient()}>
+          <AppShell config={config}>x</AppShell>
+        </QueryClientProvider>
       </ConfigProvider>
     </NextIntlClientProvider>,
   );

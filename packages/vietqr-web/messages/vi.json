@@ -13,6 +13,14 @@
     "language": "Ngôn ngữ",
     "toggleTheme": "Giao diện tối"
   },
+  "Status": {
+    "label": "Trạng thái API",
+    "up": "API hoạt động · v{version}",
+    "upNoVersion": "API hoạt động",
+    "down": "Không kết nối được API",
+    "checking": "Đang kiểm tra API…",
+    "outdated": "API v{apiVersion} cũ hơn phiên bản máy khách cần (v{expected}). Một số tính năng có thể không hoạt động."
+  },
   "Home": {
     "placeholder": "Trang Studio tạm thời (Mẫu mặc định: {template})."
   },
@@ -22,14 +30,41 @@
     "desc": "Mô tả",
     "correlationId": "Mã tương quan",
     "codes": {
+      "99": "Đã xảy ra lỗi phía máy chủ hoặc không kết nối được dịch vụ. Vui lòng thử lại sau.",
       "01": "Thiếu thông tin bắt buộc. Hãy điền đầy đủ các trường rồi thử lại.",
       "02": "Số tiền không hợp lệ. Nhập số tiền VND nguyên trong phạm vi cho phép.",
       "03": "Một giá trị không hợp lệ. Hãy kiểm tra lại thông tin đã nhập.",
       "04": "Không tìm thấy ngân hàng này. Hãy chọn ngân hàng trong danh sách.",
       "05": "Tùy chọn này không được hỗ trợ.",
       "06": "Không đọc được mã QR từ hình ảnh này. Hãy thử ảnh rõ và lớn hơn.",
-      "07": "Nội dung mã QR không phải là dữ liệu VietQR hợp lệ.",
-      "99": "Đã xảy ra lỗi phía máy chủ hoặc không kết nối được dịch vụ. Vui lòng thử lại sau."
+      "07": "Nội dung mã QR không phải là dữ liệu VietQR hợp lệ."
+    }
+  },
+  "Banks": {
+    "title": "Ngân hàng",
+    "intro": "Các ngân hàng được VietQR hỗ trợ. Chọn một ngân hàng để tạo mã QR trong Studio.",
+    "searchLabel": "Tìm ngân hàng",
+    "searchHint": "Tìm theo tên, tên viết tắt, mã hoặc BIN",
+    "count": "{count, plural, other {# ngân hàng}}",
+    "noResults": "Không có ngân hàng nào khớp “{query}”.",
+    "loading": "Đang tải danh sách ngân hàng…",
+    "retry": "Thử lại",
+    "listLabel": "Ngân hàng",
+    "openInStudio": "Tạo QR trong Studio",
+    "openInStudioFor": "Tạo QR với {name} trong Studio",
+    "viewDetails": "Chi tiết",
+    "back": "Tất cả ngân hàng",
+    "fields": {
+      "name": "Tên đầy đủ",
+      "shortName": "Tên viết tắt",
+      "code": "Mã",
+      "bin": "BIN"
+    },
+    "picker": {
+      "placeholder": "Chọn ngân hàng",
+      "noResults": "Không có ngân hàng phù hợp",
+      "loading": "Đang tải danh sách ngân hàng…",
+      "clear": "Bỏ chọn ngân hàng"
     }
   }
 }

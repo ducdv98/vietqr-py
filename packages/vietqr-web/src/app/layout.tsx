@@ -4,6 +4,7 @@ import { getLocale } from "next-intl/server";
 import { AppShell } from "@/components/layout/app-shell";
 import { THEME_INIT_SCRIPT } from "@/components/layout/theme-script";
 import { ConfigProvider } from "@/lib/config";
+import { QueryProvider } from "@/lib/query/provider";
 import { getConfig } from "@/lib/config/server";
 import "./globals.css";
 
@@ -30,7 +31,9 @@ export default async function RootLayout({
       <body>
         <NextIntlClientProvider>
           <ConfigProvider config={config}>
-            <AppShell config={config}>{children}</AppShell>
+            <QueryProvider>
+              <AppShell config={config}>{children}</AppShell>
+            </QueryProvider>
           </ConfigProvider>
         </NextIntlClientProvider>
       </body>
