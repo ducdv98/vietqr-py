@@ -21,7 +21,7 @@ export function LocaleSwitcher() {
         const next = e.target.value;
         startTransition(() => setLocale(next));
       }}
-      className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+      className="h-9 rounded-lg border border-input bg-card px-2 text-sm"
     >
       {locales.map((l) => (
         <option key={l} value={l} lang={l}>

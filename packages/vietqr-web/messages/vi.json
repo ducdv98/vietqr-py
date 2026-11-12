@@ -13,6 +13,14 @@
     "language": "Ngôn ngữ",
     "toggleTheme": "Giao diện tối"
   },
+  "Home": {
+    "heroLabel": "Chào mừng",
+    "badge": "VietQR",
+    "tagline": "Tạo mã thanh toán VietQR trong vài giây.",
+    "subtitle": "Chọn ngân hàng, nhập thông tin và tải mã QR mà mọi ứng dụng ngân hàng Việt Nam đều quét được.",
+    "supported": "Hỗ trợ các ngân hàng như",
+    "allBanks": "Xem tất cả ngân hàng"
+  },
   "Status": {
     "label": "Trạng thái API",
     "up": "API hoạt động · v{version}",

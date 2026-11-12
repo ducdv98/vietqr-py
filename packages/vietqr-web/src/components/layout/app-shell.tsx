@@ -23,21 +23,24 @@ export function AppShell({
       >
         {t("Shell.skipToContent")}
       </a>
-      <header className="border-b border-border">
+      <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-lg font-semibold tracking-tight text-primary"
+          >
             {config.appLogo ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={config.appLogo} alt="" className="h-6 w-auto" />
             ) : null}
             {config.appName}
           </Link>
-          <nav aria-label={t("Nav.label")} className="flex gap-4 text-sm">
+          <nav aria-label={t("Nav.label")} className="flex gap-1 text-sm">
             {nav.map((item) => (
               <Link
                 key={item.page}
                 href={item.href}
-                className="hover:underline"
+                className="rounded-md px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 {t(`Nav.${item.labelKey}`)}
               </Link>
@@ -49,7 +52,7 @@ export function AppShell({
           </div>
         </div>
       </header>
-      <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+      <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
         {children}
       </main>
       <footer className="border-t border-border text-sm text-muted-foreground">

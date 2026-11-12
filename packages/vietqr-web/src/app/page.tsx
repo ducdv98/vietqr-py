@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { HomeHero } from "@/components/layout/home-hero";
 import { Studio } from "@/components/studio/studio";
 import { getConfig } from "@/lib/config/server";
 import { defaultParams, parseParams } from "@/lib/studio/params";
@@ -14,5 +15,10 @@ export default async function HomePage({
     await searchParams,
     defaultParams(defaultTemplate),
   );
-  return <Studio initial={initial} />;
+  return (
+    <>
+      <HomeHero showBanksLink={enabledPages.includes("banks")} />
+      <Studio initial={initial} />
+    </>
+  );
 }

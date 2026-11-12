@@ -13,6 +13,14 @@
     "language": "Language",
     "toggleTheme": "Dark theme"
   },
+  "Home": {
+    "heroLabel": "Welcome",
+    "badge": "VietQR",
+    "tagline": "Create VietQR payment codes in seconds.",
+    "subtitle": "Pick a bank, enter the details and download a QR code any Vietnamese banking app can scan.",
+    "supported": "Works with banks including",
+    "allBanks": "Browse all banks"
+  },
   "Status": {
     "label": "API status",
     "up": "API online · v{version}",
