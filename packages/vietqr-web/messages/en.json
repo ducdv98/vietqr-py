@@ -15,5 +15,21 @@
   },
   "Home": {
     "placeholder": "Studio placeholder (default Template: {template})."
+  },
+  "Errors": {
+    "technicalDetail": "Technical detail",
+    "code": "Code",
+    "desc": "Description",
+    "correlationId": "Correlation ID",
+    "codes": {
+      "01": "Some required information is missing. Fill in all fields and try again.",
+      "02": "The amount is not valid. Enter a whole number of VND within the allowed range.",
+      "03": "One of the values is not valid. Check your input and try again.",
+      "04": "We could not find that bank. Choose a bank from the list.",
+      "05": "That option is not supported.",
+      "06": "We could not read a QR code from that image. Try a clearer, larger image.",
+      "07": "The QR content is not a valid VietQR payload.",
+      "99": "Something went wrong on our side or the service is unreachable. Please try again later."
+    }
   }
 }

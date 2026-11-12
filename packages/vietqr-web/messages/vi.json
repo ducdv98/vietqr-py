@@ -15,5 +15,21 @@
   },
   "Home": {
     "placeholder": "Trang Studio tạm thời (Mẫu mặc định: {template})."
+  },
+  "Errors": {
+    "technicalDetail": "Chi tiết kỹ thuật",
+    "code": "Mã lỗi",
+    "desc": "Mô tả",
+    "correlationId": "Mã tương quan",
+    "codes": {
+      "01": "Thiếu thông tin bắt buộc. Hãy điền đầy đủ các trường rồi thử lại.",
+      "02": "Số tiền không hợp lệ. Nhập số tiền VND nguyên trong phạm vi cho phép.",
+      "03": "Một giá trị không hợp lệ. Hãy kiểm tra lại thông tin đã nhập.",
+      "04": "Không tìm thấy ngân hàng này. Hãy chọn ngân hàng trong danh sách.",
+      "05": "Tùy chọn này không được hỗ trợ.",
+      "06": "Không đọc được mã QR từ hình ảnh này. Hãy thử ảnh rõ và lớn hơn.",
+      "07": "Nội dung mã QR không phải là dữ liệu VietQR hợp lệ.",
+      "99": "Đã xảy ra lỗi phía máy chủ hoặc không kết nối được dịch vụ. Vui lòng thử lại sau."
+    }
   }
 }
