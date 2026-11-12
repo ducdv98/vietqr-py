@@ -202,3 +202,76 @@ def test_unexpected_errors_are_hidden_from_the_client(monkeypatch: pytest.Monkey
     assert response.status_code == 500
     assert response.json() == {"code": "99", "desc": "Internal server error.", "data": None}
     assert "secret" not in response.text
+
+
+STATIC_PARAMS = {"bankBin": "970422", "accountNo": "0838539629"}
+
+
+@pytest.mark.parametrize("amount", [None, "", "  "])
+def test_generate_without_amount_is_a_static_qr(client: TestClient, amount: str | None) -> None:
+    params = {**STATIC_PARAMS, **({} if amount is None else {"amount": amount})}
+    get = client.get(f"{BASE}/generate", params=params)
+    post = client.post(f"{BASE}/generate", json=params)
+    assert get.status_code == post.status_code == 200
+    info = parse_payload(get.json()["data"]["qrCode"])
+    assert info.is_dynamic is False
+    assert info.amount is None
+    assert info.description is None
+    assert "5303704" in info.raw_payload
+    assert info.raw_tags["01"] == "11"
+    assert post.json() == get.json()
+
+
+def test_static_qr_keeps_the_description(client: TestClient) -> None:
+    response = client.get(f"{BASE}/generate", params={**STATIC_PARAMS, "description": "Ung ho"})
+    info = parse_payload(response.json()["data"]["qrCode"])
+    assert info.raw_tags["01"] == "11"
+    assert info.description == "Ung ho"
+
+
+@pytest.mark.parametrize("template", TEMPLATES)
+def test_static_image_for_every_template(client: TestClient, template: str) -> None:
+    params = {**STATIC_PARAMS, "accountName": "NGUYEN VAN A", "template": template}
+    get = client.get(f"{BASE}/image", params=params)
+    post = client.post(f"{BASE}/image", json=params)
+    assert get.status_code == post.status_code == 200
+    assert get.content.startswith(PNG_MAGIC)
+    assert post.content == get.content
+
+    generated = client.get(f"{BASE}/generate", params=params).json()["data"]["qrCode"]
+    assert decode_qr(get.content) == generated
+    assert parse_payload(generated).amount is None
+
+
+def test_static_print_card_has_no_amount_line(client: TestClient) -> None:
+    dynamic = client.get(f"{BASE}/image", params={**PARAMS, "template": "print"})
+    static = client.get(
+        f"{BASE}/image",
+        params={
+            "bankBin": "970422",
+            "accountNo": "0838539629",
+            "accountName": "NGUYEN VAN A",
+            "template": "print",
+        },
+    )
+    # Fewer text lines (no amount, no description) means a shorter card.
+    assert (
+        Image.open(io.BytesIO(static.content)).height
+        < Image.open(io.BytesIO(dynamic.content)).height
+    )
+
+
+@pytest.mark.parametrize("path", ["image", "generate"])
+def test_missing_required_parameters_message(client: TestClient, path: str) -> None:
+    response = client.get(f"{BASE}/{path}", params={"amount": "50000"})
+    assert response.status_code == 400
+    body = response.json()
+    assert body["code"] == "01"
+    assert body["desc"].startswith("Missing required parameters: bankBin, accountNo.")
+
+
+@pytest.mark.parametrize("amount", ["0", "000"])
+def test_explicit_zero_amount_is_still_invalid(client: TestClient, amount: str) -> None:
+    response = client.get(f"{BASE}/generate", params={**STATIC_PARAMS, "amount": amount})
+    assert response.status_code == 400
+    assert response.json()["code"] == "02"

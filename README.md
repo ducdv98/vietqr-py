@@ -145,7 +145,10 @@ Every route except `/health` lives under `/api/v1/vietqr-core`.
 | GET | `/banks/{bin_or_code}` | One bank, by BIN or short code. |
 | GET | `/health` | Liveness check (at the root, without the prefix). Returns `{"status": "ok", "version": "<api version>"}`. |
 
-`/image` and `/generate` take `bankBin`, `accountNo`, `amount` and `description` (required) and
+`/image` and `/generate` require `bankBin` and `accountNo`. `amount` and `description` are optional:
+without an amount (missing or blank) the QR is static (QR type static, no amount, the payer enters it);
+with one it is dynamic. An amount must be a positive whole number, so `0` is rejected (error `02`)
+rather than treated as static. They also take
 `accountName`, `template` (`compact`, the default, `qr_only` or `print`), `serviceType`,
 `billNumber`, `format` (`png` only) and `size` (for `qr_only`). The full schema is in `/docs`.
 

@@ -6,7 +6,7 @@ from vietqr_api.errors import ApiError, ErrorCode
 from vietqr_api.models import GenerateRequest
 from vietqr_api.service import prepare
 from vietqr_core.banks.catalog import default_catalog
-from vietqr_core.emv.enums import ServiceType
+from vietqr_core.emv.enums import QrType, ServiceType
 from vietqr_core.parsing.parser import parse_payload
 
 CATALOG = default_catalog()
@@ -49,8 +49,31 @@ def test_missing_fields_are_all_reported_in_one_message() -> None:
     error = error_of(GenerateRequest(account_no="  "))
     assert error.code is ErrorCode.MISSING_PARAMETER
     assert error.status_code == 400
-    for name in ("bankBin", "accountNo", "amount", "description"):
-        assert name in error.desc
+    assert error.desc.startswith("Missing required parameters: bankBin, accountNo.")
+
+
+@pytest.mark.parametrize("amount", [None, "", "   "])
+def test_missing_amount_makes_a_static_qr(amount: str | None) -> None:
+    prepared = prepare(make(amount=amount, description=None), CATALOG)
+    info = parse_payload(prepared.payload)
+    assert info.qr_type is QrType.STATIC
+    assert info.amount is None
+    assert info.description is None
+    assert prepared.details.amount is None
+    assert prepared.details.description == ""
+
+
+def test_static_qr_keeps_an_optional_description() -> None:
+    prepared = prepare(make(amount=None, description="Ung ho"), CATALOG)
+    info = parse_payload(prepared.payload)
+    assert info.qr_type is QrType.STATIC
+    assert info.description == "Ung ho"
+
+
+def test_amount_makes_a_dynamic_qr_even_without_description() -> None:
+    info = parse_payload(prepare(make(description=None), CATALOG).payload)
+    assert info.qr_type is QrType.DYNAMIC
+    assert info.amount == 50000
 
 
 def test_template_is_trimmed_and_case_insensitive() -> None:

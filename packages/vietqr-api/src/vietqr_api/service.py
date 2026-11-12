@@ -52,15 +52,13 @@ def _check_required(request: GenerateRequest) -> None:
     required = {
         "bankBin": request.bank_bin,
         "accountNo": request.account_no,
-        "amount": request.amount,
-        "description": request.description,
     }
     missing = [name for name, value in required.items() if not _text(value)]
     if missing:
         raise ApiError(
             ErrorCode.MISSING_PARAMETER,
             f"Missing required parameters: {', '.join(missing)}. "
-            "All four are required: bankBin, accountNo, amount, description.",
+            "Required: bankBin, accountNo. Optional: amount (omit it for a static QR), description.",
         )
 
 
@@ -85,8 +83,11 @@ def _check_format(value: str | None) -> None:
         )
 
 
-def _parse_amount(value: str | None) -> int:
+def _parse_amount(value: str | None) -> int | None:
+    """A blank amount means a static QR; any given amount must be a positive whole number."""
     text = _text(value)
+    if not text:
+        return None
     if not _is_ascii_digits(text) or len(text) > MAX_AMOUNT_DIGITS or int(text) <= 0:
         raise ApiError(
             ErrorCode.INVALID_AMOUNT,

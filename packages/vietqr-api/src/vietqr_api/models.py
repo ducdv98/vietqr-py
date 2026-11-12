@@ -25,14 +25,24 @@ class _CamelModel(BaseModel):
 class GenerateRequest(_CamelModel):
     """Body of POST /generate and /image.
 
+    Only bankBin and accountNo are required. A missing or blank amount makes a static QR
+    (the payer enters the amount); a given amount must be a positive whole number, so "0" is
+    rejected rather than treated as static. Description is optional.
+
     Every field is optional at the schema level so that a missing required field is reported
     by our own validation (code 01) instead of FastAPI's generic 422.
     """
 
     bank_bin: str | None = None
     account_no: str | None = None
-    amount: str | None = None
-    description: str | None = None
+    amount: str | None = Field(
+        default=None,
+        description="Positive whole number of VND. Omit or leave blank for a static QR "
+        '(the payer enters the amount). "0" is invalid.',
+    )
+    description: str | None = Field(
+        default=None, description="Transfer note, up to 95 characters. Optional."
+    )
     account_name: str | None = None
     template: str | None = "compact"
     service_type: str | None = None
