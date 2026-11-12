@@ -1,0 +1,19 @@
+{
+  "Nav": {
+    "label": "Main",
+    "studio": "Studio",
+    "inspect": "Inspect",
+    "banks": "Banks"
+  },
+  "Footer": {
+    "label": "Footer links"
+  },
+  "Shell": {
+    "skipToContent": "Skip to content",
+    "language": "Language",
+    "toggleTheme": "Dark theme"
+  },
+  "Home": {
+    "placeholder": "Studio placeholder (default Template: {template})."
+  }
+}

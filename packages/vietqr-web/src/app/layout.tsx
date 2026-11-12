@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
 import { AppShell } from "@/components/layout/app-shell";
+import { THEME_INIT_SCRIPT } from "@/components/layout/theme-script";
 import { ConfigProvider } from "@/lib/config";
 import { getConfig } from "@/lib/config/server";
 import "./globals.css";
@@ -12,18 +15,24 @@ export function generateMetadata(): Metadata {
   return { title: appName, description: `${appName} - VietQR code generator` };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const config = getConfig();
+  const locale = await getLocale();
   return (
-    <html lang={config.defaultLocale}>
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body>
-        <ConfigProvider config={config}>
-          <AppShell config={config}>{children}</AppShell>
-        </ConfigProvider>
+        <NextIntlClientProvider>
+          <ConfigProvider config={config}>
+            <AppShell config={config}>{children}</AppShell>
+          </ConfigProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

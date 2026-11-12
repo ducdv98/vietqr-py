@@ -1,0 +1,19 @@
+{
+  "Nav": {
+    "label": "Chính",
+    "studio": "Tạo mã",
+    "inspect": "Kiểm tra",
+    "banks": "Ngân hàng"
+  },
+  "Footer": {
+    "label": "Liên kết chân trang"
+  },
+  "Shell": {
+    "skipToContent": "Chuyển đến nội dung",
+    "language": "Ngôn ngữ",
+    "toggleTheme": "Giao diện tối"
+  },
+  "Home": {
+    "placeholder": "Trang Studio tạm thời (Mẫu mặc định: {template})."
+  }
+}

@@ -1,18 +1,36 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { NextIntlClientProvider } from "next-intl";
+import { describe, expect, it, vi } from "vitest";
+import en from "../../../messages/en.json";
+import vi_ from "../../../messages/vi.json";
 import { parseConfig } from "@/lib/config/parse";
+import { ConfigProvider } from "@/lib/config";
 import { AppShell } from "./app-shell";
+
+vi.mock("@/i18n/actions", () => ({ setLocale: vi.fn() }));
 
 const cfg = (extra: Record<string, string> = {}) =>
   parseConfig({ VIETQR_API_URL: "http://api:8000", ...extra });
 
+function renderShell(
+  config: ReturnType<typeof cfg>,
+  locale: "en" | "vi" = "en",
+) {
+  return render(
+    <NextIntlClientProvider
+      locale={locale}
+      messages={locale === "en" ? en : vi_}
+    >
+      <ConfigProvider config={config}>
+        <AppShell config={config}>x</AppShell>
+      </ConfigProvider>
+    </NextIntlClientProvider>,
+  );
+}
+
 describe("AppShell", () => {
   it("shows nav links only for enabled pages", () => {
-    render(
-      <AppShell config={cfg({ VIETQR_ENABLED_PAGES: "studio,banks" })}>
-        x
-      </AppShell>,
-    );
+    renderShell(cfg({ VIETQR_ENABLED_PAGES: "studio,banks" }));
     const nav = screen.getByRole("navigation", { name: "Main" });
     expect(nav).toHaveTextContent("Studio");
     expect(nav).toHaveTextContent("Banks");
@@ -20,20 +38,31 @@ describe("AppShell", () => {
   });
 
   it("renders app name and footer links", () => {
-    render(
-      <AppShell
-        config={cfg({
-          VIETQR_APP_NAME: "Acme",
-          VIETQR_FOOTER_LINKS: "Docs|/docs",
-        })}
-      >
-        x
-      </AppShell>,
+    renderShell(
+      cfg({
+        VIETQR_APP_NAME: "Acme",
+        VIETQR_FOOTER_LINKS: "Docs|/docs",
+      }),
     );
     expect(screen.getByText("Acme")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Docs" })).toHaveAttribute(
       "href",
       "/docs",
     );
+  });
+
+  it("translates nav labels and offers a locale switcher", () => {
+    renderShell(cfg({ VIETQR_ENABLED_PAGES: "studio,banks" }), "vi");
+    expect(screen.getByRole("navigation", { name: "Chính" })).toHaveTextContent(
+      "Tạo mã",
+    );
+    expect(
+      screen.getByRole("combobox", { name: "Ngôn ngữ" }),
+    ).toBeInTheDocument();
+  });
+
+  it("hides the switcher when only one locale is enabled", () => {
+    renderShell(cfg({ VIETQR_LOCALES: "vi" }));
+    expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
   });
 });
