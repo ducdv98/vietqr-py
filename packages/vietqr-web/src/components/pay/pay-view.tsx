@@ -3,6 +3,8 @@
 import { useLocale, useTranslations } from "next-intl";
 import { ApiErrorAlert } from "@/components/api-error";
 import { BankLogo } from "@/components/banks/bank-logo";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatVnd } from "@/lib/format/amount";
 import { useBanks } from "@/lib/banks/queries";
 import { resolvePay } from "@/lib/pay/resolve";
@@ -19,7 +21,7 @@ function ProblemAlert({
   return (
     <div
       role="alert"
-      className="space-y-2 rounded-md border border-red-500/50 bg-red-500/10 p-4"
+      className="space-y-2 rounded-xl border border-red-500/50 bg-red-500/10 p-4"
     >
       <p className="font-medium">{title}</p>
       {children}
@@ -40,9 +42,12 @@ export function PayView({ params }: { params: StudioParams }) {
   if (banks.error) return <ApiErrorAlert error={banks.error} />;
   if (!resolved)
     return (
-      <p role="status" className="text-muted-foreground">
-        {t("loading")}
-      </p>
+      <div className="mx-auto max-w-md space-y-3">
+        <p role="status" className="text-muted-foreground">
+          {t("loading")}
+        </p>
+        <Skeleton className="h-64" />
+      </div>
     );
   if (resolved.status === "missing")
     return (
@@ -76,61 +81,63 @@ export function PayView({ params }: { params: StudioParams }) {
   const { bank, request: req } = resolved;
   const amount = req.amount ? formatVnd(req.amount, locale) : null;
   return (
-    <article className="mx-auto max-w-md space-y-5" aria-labelledby="pay-title">
-      <h1 id="pay-title" className="text-2xl font-semibold">
-        {t("title")}
-      </h1>
-      <div
-        role="note"
-        className="rounded-md border border-amber-500/60 bg-amber-500/10 p-3 text-sm"
-      >
-        <p className="font-medium">{t("verify.title")}</p>
-        <p>{t("verify.body")}</p>
-      </div>
-      {qr.error ? <ApiErrorAlert error={qr.error} /> : null}
-      {!qr.error && qr.data ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={qr.data.qrDataURL}
-          alt={t("qrAlt")}
-          className="mx-auto w-full max-w-xs rounded-md border border-input bg-white"
-        />
-      ) : null}
-      {!qr.error && !qr.data ? (
-        <p role="status" className="text-muted-foreground">
-          {t("generating")}
-        </p>
-      ) : null}
-      <div className="flex items-center gap-3">
-        <BankLogo logo={bank.logo} code={bank.code} className="size-12" />
-        <p className="text-lg font-semibold" data-testid="pay-bank">
-          {bank.shortName}
-        </p>
-      </div>
-      <dl className="space-y-3">
-        <div>
-          <dt className="text-sm text-muted-foreground">{t("account")}</dt>
-          <dd className="font-mono text-2xl font-semibold break-all">
-            {req.accountNo}
-          </dd>
+    <Card className="mx-auto max-w-md p-5">
+      <article className="space-y-5" aria-labelledby="pay-title">
+        <h1 id="pay-title" className="text-2xl font-semibold">
+          {t("title")}
+        </h1>
+        <div
+          role="note"
+          className="rounded-lg bg-warning p-3 text-sm text-warning-foreground"
+        >
+          <p className="font-medium">{t("verify.title")}</p>
+          <p>{t("verify.body")}</p>
         </div>
-        <div>
-          <dt className="text-sm text-muted-foreground">{t("amount")}</dt>
-          {amount ? (
-            <dd className="text-2xl font-semibold">{amount}</dd>
-          ) : (
-            <dd data-testid="pay-no-amount">{t("noAmount")}</dd>
-          )}
-        </div>
-        {req.description ? (
-          <div>
-            <dt className="text-sm text-muted-foreground">
-              {t("description")}
-            </dt>
-            <dd className="break-words">{req.description}</dd>
-          </div>
+        {qr.error ? <ApiErrorAlert error={qr.error} /> : null}
+        {!qr.error && qr.data ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={qr.data.qrDataURL}
+            alt={t("qrAlt")}
+            className="mx-auto w-full max-w-xs rounded-md border border-input bg-white"
+          />
         ) : null}
-      </dl>
-    </article>
+        {!qr.error && !qr.data ? (
+          <p role="status" className="text-muted-foreground">
+            {t("generating")}
+          </p>
+        ) : null}
+        <div className="flex items-center gap-3">
+          <BankLogo logo={bank.logo} code={bank.code} className="size-12" />
+          <p className="text-lg font-semibold" data-testid="pay-bank">
+            {bank.shortName}
+          </p>
+        </div>
+        <dl className="space-y-3">
+          <div>
+            <dt className="text-sm text-muted-foreground">{t("account")}</dt>
+            <dd className="font-mono text-2xl font-semibold break-all">
+              {req.accountNo}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-sm text-muted-foreground">{t("amount")}</dt>
+            {amount ? (
+              <dd className="text-2xl font-semibold">{amount}</dd>
+            ) : (
+              <dd data-testid="pay-no-amount">{t("noAmount")}</dd>
+            )}
+          </div>
+          {req.description ? (
+            <div>
+              <dt className="text-sm text-muted-foreground">
+                {t("description")}
+              </dt>
+              <dd className="break-words">{req.description}</dd>
+            </div>
+          ) : null}
+        </dl>
+      </article>
+    </Card>
   );
 }

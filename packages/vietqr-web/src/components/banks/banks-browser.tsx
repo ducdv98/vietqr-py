@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ApiErrorAlert } from "@/components/api-error";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { searchBanks } from "@/lib/banks/search";
 import { useBanks } from "@/lib/banks/queries";
 import { studioHref } from "@/lib/banks/studio-link";
@@ -18,7 +20,7 @@ export function BanksBrowser() {
 
   return (
     <div className="space-y-4">
-      <div className="space-y-1">
+      <Card className="space-y-1 p-4">
         <label htmlFor="bank-search" className="text-sm font-medium">
           {t("searchLabel")}
         </label>
@@ -29,14 +31,24 @@ export function BanksBrowser() {
           aria-describedby="bank-search-hint"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+          className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         />
         <p id="bank-search-hint" className="text-xs text-muted-foreground">
           {t("searchHint")}
         </p>
-      </div>
+      </Card>
 
-      {isPending ? <p role="status">{t("loading")}</p> : null}
+      {isPending ? (
+        <div className="space-y-3">
+          <p role="status" className="text-sm text-muted-foreground">
+            {t("loading")}
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2" aria-hidden="true">
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+          </div>
+        </div>
+      ) : null}
       {error ? (
         <div className="space-y-2">
           <ApiErrorAlert error={error} />
@@ -57,7 +69,7 @@ export function BanksBrowser() {
             {results.map((b) => (
               <li
                 key={b.bin}
-                className="flex items-start gap-3 rounded-lg border border-border p-3"
+                className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:border-primary/40"
               >
                 <BankLogo logo={b.logo} code={b.code} className="size-12" />
                 <div className="min-w-0 flex-1 space-y-1">
@@ -76,7 +88,7 @@ export function BanksBrowser() {
                   <Link
                     href={studioHref(b)}
                     aria-label={t("openInStudioFor", { name: b.shortName })}
-                    className="inline-block text-sm font-medium underline"
+                    className="inline-block text-sm font-medium text-primary underline underline-offset-2"
                   >
                     {t("openInStudio")}
                   </Link>

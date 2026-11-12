@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useId, useState, type DragEvent, type FormEvent } from "react";
 import { ApiErrorAlert } from "@/components/api-error";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError } from "@/lib/api/unwrap";
 import { useConfig } from "@/lib/config";
 import { useInspect } from "@/lib/inspect/queries";
@@ -59,30 +61,32 @@ export function Inspector() {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={submitPayload} className="space-y-2">
-        <label htmlFor={payloadId} className="block font-medium">
-          {t("payload.label")}
-        </label>
-        <p id={hintId} className="text-sm text-muted-foreground">
-          {t("payload.hint")}
-        </p>
-        <textarea
-          id={payloadId}
-          aria-describedby={hintId}
-          value={payload}
-          onChange={(e) => setPayload(e.target.value)}
-          placeholder={t("payload.placeholder")}
-          rows={4}
-          spellCheck={false}
-          className="w-full rounded-md border bg-background p-2 font-mono text-sm"
-        />
-        <button
-          type="submit"
-          className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          {t("payload.submit")}
-        </button>
-      </form>
+      <Card className="p-5">
+        <form onSubmit={submitPayload} className="space-y-2">
+          <label htmlFor={payloadId} className="block font-medium">
+            {t("payload.label")}
+          </label>
+          <p id={hintId} className="text-sm text-muted-foreground">
+            {t("payload.hint")}
+          </p>
+          <textarea
+            id={payloadId}
+            aria-describedby={hintId}
+            value={payload}
+            onChange={(e) => setPayload(e.target.value)}
+            placeholder={t("payload.placeholder")}
+            rows={4}
+            spellCheck={false}
+            className="w-full rounded-lg border border-input bg-background p-3 font-mono text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          />
+          <button
+            type="submit"
+            className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          >
+            {t("payload.submit")}
+          </button>
+        </form>
+      </Card>
 
       <div
         data-testid="dropzone"
@@ -92,7 +96,7 @@ export function Inspector() {
         }}
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
-        className={`rounded-md border-2 border-dashed p-6 text-center has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring ${dragging ? "border-primary bg-primary/10" : ""}`}
+        className={`rounded-xl border-2 border-dashed border-border bg-card p-6 text-center transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring ${dragging ? "border-primary bg-primary/10" : ""}`}
       >
         <label className="block cursor-pointer space-y-2">
           <span className="block font-medium">{t("image.label")}</span>
@@ -122,12 +126,19 @@ export function Inspector() {
             {uploadError}
           </p>
         ) : null}
-        {inspect.isPending ? <p role="status">{t("result.reading")}</p> : null}
+        {inspect.isPending ? (
+          <div className="space-y-2">
+            <p role="status" className="text-sm text-muted-foreground">
+              {t("result.reading")}
+            </p>
+            <Skeleton className="h-32" />
+          </div>
+        ) : null}
         {err ? (
           <ApiErrorAlert error={err} message={specific ?? undefined} />
         ) : null}
         {inspect.data ? (
-          <div className="space-y-3">
+          <Card className="space-y-3 p-5">
             <h2 className="text-lg font-semibold">{t("result.title")}</h2>
             {source ? (
               <p className="text-sm text-muted-foreground">
@@ -135,7 +146,7 @@ export function Inspector() {
               </p>
             ) : null}
             <Breakdown info={inspect.data} />
-          </div>
+          </Card>
         ) : null}
       </section>
     </div>

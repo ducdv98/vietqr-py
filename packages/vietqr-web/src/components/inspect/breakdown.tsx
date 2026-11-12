@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { BankLogo } from "@/components/banks/bank-logo";
+import { Badge } from "@/components/ui/badge";
 import { useConfig } from "@/lib/config";
 import { formatVnd } from "@/lib/format/amount";
 import { createSimilarHref } from "@/lib/inspect/similar-qr";
@@ -20,14 +21,13 @@ export function Breakdown({ info }: { info: InspectResult }) {
 
   return (
     <div className="space-y-4">
-      <p
-        className={
-          info.isValidCrc
-            ? "inline-block rounded-md bg-green-500/15 px-2 py-1 text-sm font-medium"
-            : "inline-block rounded-md bg-red-500/15 px-2 py-1 text-sm font-medium"
-        }
-      >
-        {info.isValidCrc ? t("crc.valid") : t("crc.invalid")}
+      <p>
+        <Badge
+          variant={info.isValidCrc ? "default" : "warning"}
+          className="px-3 py-1 text-sm"
+        >
+          {info.isValidCrc ? t("crc.valid") : t("crc.invalid")}
+        </Badge>
       </p>
       {info.isValidCrc ? null : (
         <p
@@ -74,7 +74,7 @@ export function Breakdown({ info }: { info: InspectResult }) {
 
       <Link
         href={createSimilarHref(info, defaultTemplate)}
-        className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
         {t("similar")}
       </Link>
@@ -97,7 +97,7 @@ export function Breakdown({ info }: { info: InspectResult }) {
             </thead>
             <tbody>
               {tags.map(([tag, value]) => (
-                <tr key={tag} className="border-t">
+                <tr key={tag} className="border-t border-border">
                   <td className="pr-4 py-1 font-mono">{tag}</td>
                   <td className="py-1 font-mono break-all">{value}</td>
                 </tr>
