@@ -6,6 +6,7 @@ import { ApiErrorAlert } from "@/components/api-error";
 import { buttonVariants } from "@/components/ui/button";
 import type { StudioParams } from "@/lib/studio/params";
 import type { StudioPayload } from "@/lib/studio/queries";
+import { ShareActions } from "./share-actions";
 import { toQuery } from "@/lib/studio/validate";
 
 export type StudioPreviewProps = {
@@ -23,7 +24,12 @@ export const imageHref = (request: StudioPayload["request"]) =>
   `/api/v1/vietqr-core/image?${toQuery(request).toString()}`;
 
 /** Preview area: Card image, Payload and the PNG download. Actions slot in beside the download. */
-export function StudioPreview({ payload, error, pending }: StudioPreviewProps) {
+export function StudioPreview({
+  payload,
+  params,
+  error,
+  pending,
+}: StudioPreviewProps) {
   const t = useTranslations("Studio.preview");
   return (
     <section aria-labelledby="studio-preview-title" className="space-y-3">
@@ -55,6 +61,7 @@ export function StudioPreview({ payload, error, pending }: StudioPreviewProps) {
               {t("download")}
             </a>
           </div>
+          <ShareActions payload={payload} params={params} />
           <div>
             <h3 className="text-sm font-medium">{t("payload")}</h3>
             <code

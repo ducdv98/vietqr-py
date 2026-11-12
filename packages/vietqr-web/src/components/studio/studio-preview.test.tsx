@@ -1,10 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import en from "../../../messages/en.json";
 import { ApiError } from "@/lib/api/unwrap";
 import { defaultParams } from "@/lib/studio/params";
 import type { StudioPayload } from "@/lib/studio/queries";
+import { ConfigProvider } from "@/lib/config";
+import { parseConfig } from "@/lib/config/parse";
 import { StudioPreview } from "./studio-preview";
 
 const payload: StudioPayload = {
@@ -22,10 +25,17 @@ const payload: StudioPayload = {
   },
 };
 
-const view = (props: Partial<Parameters<typeof StudioPreview>[0]>) =>
+const view = (
+  props: Partial<Parameters<typeof StudioPreview>[0]>,
+  env: Record<string, string> = {},
+) =>
   render(
     <NextIntlClientProvider locale="en" messages={en}>
-      <StudioPreview payload={null} params={defaultParams()} {...props} />
+      <ConfigProvider
+        config={parseConfig({ VIETQR_API_URL: "http://api:8000", ...env })}
+      >
+        <StudioPreview payload={null} params={defaultParams()} {...props} />
+      </ConfigProvider>
     </NextIntlClientProvider>,
   );
 
@@ -50,5 +60,74 @@ describe("StudioPreview", () => {
     view({ payload, error: new ApiError("02", "bad amount", null, 400) });
     expect(screen.getByRole("alert")).toHaveTextContent(/amount is not valid/);
     expect(screen.queryByRole("img")).toBeNull();
+  });
+
+  describe("share actions", () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    beforeEach(() => {
+      writeText.mockClear();
+      Object.defineProperty(navigator, "clipboard", {
+        value: { writeText },
+        configurable: true,
+      });
+    });
+
+    const params = { ...defaultParams(), bank: "VCB", account: "0123" };
+
+    it("hides Copy Pay link when the pay page is disabled", () => {
+      view({ payload, params });
+      expect(
+        screen.getByRole("button", { name: "Copy Payload" }),
+      ).toBeVisible();
+      expect(
+        screen.queryByRole("button", { name: "Copy Pay link" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("shows Copy Pay link when enabled and copies an absolute /pay URL", async () => {
+      view({ payload, params }, { VIETQR_ENABLED_PAGES: "studio,pay" });
+      await userEvent.click(
+        screen.getByRole("button", { name: "Copy Pay link" }),
+      );
+      expect(writeText).toHaveBeenCalledWith(
+        `${window.location.origin}/pay?bank=VCB&account=0123`,
+      );
+      expect(screen.getByText("Pay link copied.")).toBeInTheDocument();
+    });
+
+    it("copies the Payload and announces it", async () => {
+      view({ payload, params });
+      await userEvent.click(
+        screen.getByRole("button", { name: "Copy Payload" }),
+      );
+      expect(writeText).toHaveBeenCalledWith("000201...");
+      expect(screen.getByText("Payload copied.")).toBeInTheDocument();
+    });
+
+    it("warns about the account number and copies the embed URL", async () => {
+      view({ payload, params });
+      expect(screen.getByTestId("embed-warning")).toHaveTextContent(
+        /account number/,
+      );
+      await userEvent.click(
+        screen.getByRole("button", { name: "Copy image URL" }),
+      );
+      expect(writeText).toHaveBeenCalledWith(
+        expect.stringMatching(
+          new RegExp(
+            `^${window.location.origin}/api/v1/vietqr-core/image\\?bankBin=970436`,
+          ),
+        ),
+      );
+    });
+
+    it("reports a failed copy", async () => {
+      writeText.mockRejectedValueOnce(new Error("denied"));
+      view({ payload, params });
+      await userEvent.click(
+        screen.getByRole("button", { name: "Copy Payload" }),
+      );
+      expect(screen.getByText(/Could not copy/)).toBeInTheDocument();
+    });
   });
 });

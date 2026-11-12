@@ -65,6 +65,20 @@
       "alt": "Thẻ VietQR đã tạo",
       "payload": "Payload",
       "download": "Tải PNG"
+    },
+    "share": {
+      "actions": {
+        "payload": "Sao chép Payload",
+        "payLink": "Sao chép liên kết thanh toán",
+        "embedUrl": "Sao chép URL ảnh"
+      },
+      "copied": {
+        "payload": "Đã sao chép Payload.",
+        "payLink": "Đã sao chép liên kết thanh toán.",
+        "embedUrl": "Đã sao chép URL ảnh."
+      },
+      "failed": "Không thể sao chép. Hãy chọn văn bản và sao chép thủ công.",
+      "embedWarning": "Riêng tư: URL ảnh chứa số tài khoản dưới dạng văn bản thường. Bất kỳ ai có URL đều xem được."
     }
   },
   "Errors": {
@@ -174,6 +188,26 @@
     "errors": {
       "notVietQr": "Đây không phải mã VietQR hợp lệ. Hãy kiểm tra payload, kể cả mã kiểm tra.",
       "decodeFailed": "Không đọc được mã QR từ ảnh này."
+    }
+  },
+  "Pay": {
+    "title": "Thanh toán",
+    "loading": "Đang tải thông tin thanh toán…",
+    "generating": "Đang tạo mã QR…",
+    "qrAlt": "Mã VietQR cho giao dịch này",
+    "account": "Số tài khoản",
+    "amount": "Số tiền",
+    "amountValue": "{amount} VND",
+    "description": "Nội dung",
+    "verify": {
+      "title": "Kiểm tra trước khi thanh toán",
+      "body": "Bất kỳ ai cũng có thể tạo trang này cho tài khoản bất kỳ. Hãy xác nhận ngân hàng, số tài khoản và số tiền với người nhận trước khi chuyển khoản."
+    },
+    "errors": {
+      "missingTitle": "Không có thông tin thanh toán",
+      "missing": "Liên kết này không chứa thông tin thanh toán. Hãy nhờ người nhận gửi lại liên kết.",
+      "invalidTitle": "Liên kết thanh toán không hợp lệ",
+      "invalid": "Một số thông tin trong liên kết bị thiếu hoặc sai. Đừng thanh toán; hãy xin người nhận liên kết mới."
     }
   }
 }

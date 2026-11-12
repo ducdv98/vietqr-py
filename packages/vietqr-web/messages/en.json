@@ -65,6 +65,20 @@
       "alt": "Generated VietQR card",
       "payload": "Payload",
       "download": "Download PNG"
+    },
+    "share": {
+      "actions": {
+        "payload": "Copy Payload",
+        "payLink": "Copy Pay link",
+        "embedUrl": "Copy image URL"
+      },
+      "copied": {
+        "payload": "Payload copied.",
+        "payLink": "Pay link copied.",
+        "embedUrl": "Image URL copied."
+      },
+      "failed": "Could not copy. Select the text and copy it manually.",
+      "embedWarning": "Privacy: the image URL contains the account number in plain text. Anyone with the URL can see it."
     }
   },
   "Errors": {
@@ -174,6 +188,26 @@
     "errors": {
       "notVietQr": "This is not a valid VietQR code. Check the payload, including its checksum.",
       "decodeFailed": "Could not read a QR code from this image."
+    }
+  },
+  "Pay": {
+    "title": "Pay",
+    "loading": "Loading payment details…",
+    "generating": "Generating QR…",
+    "qrAlt": "VietQR code for this payment",
+    "account": "Account number",
+    "amount": "Amount",
+    "amountValue": "{amount} VND",
+    "description": "Description",
+    "verify": {
+      "title": "Check before you pay",
+      "body": "Anyone can create this page for any account. Confirm the bank, account number and amount with the recipient before you transfer."
+    },
+    "errors": {
+      "missingTitle": "No payment details",
+      "missing": "This link does not contain any payment details. Ask the recipient to send you the link again.",
+      "invalidTitle": "This payment link is not valid",
+      "invalid": "Some details in the link are missing or wrong. Do not pay; ask the recipient for a new link."
     }
   }
 }
