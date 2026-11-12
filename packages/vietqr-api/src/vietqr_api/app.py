@@ -1,5 +1,7 @@
 """Application factory."""
 
+import importlib.metadata
+
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,7 +28,7 @@ def create_app(settings: Settings | None = None, catalog: BankCatalog | None = N
     )
     app = FastAPI(
         title="VietQR API",
-        version="0.1.0",
+        version=importlib.metadata.version("vietqr-api"),
         docs_url=docs_url,
         redoc_url=redoc_url,
         openapi_url=openapi_url,

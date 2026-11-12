@@ -143,7 +143,7 @@ Every route except `/health` lives under `/api/v1/vietqr-core`.
 | POST | `/decode` | Decode an image: multipart field `file`, or JSON `{"imageBase64": "..."}` (plain Base64 or a `data:` URL). |
 | GET | `/banks` | The bank catalog. |
 | GET | `/banks/{bin_or_code}` | One bank, by BIN or short code. |
-| GET | `/health` | Liveness check (at the root, without the prefix). |
+| GET | `/health` | Liveness check (at the root, without the prefix). Returns `{"status": "ok", "version": "<api version>"}`. |
 
 `/image` and `/generate` take `bankBin`, `accountNo`, `amount` and `description` (required) and
 `accountName`, `template` (`compact`, the default, `qr_only` or `print`), `serviceType`,

@@ -1,4 +1,5 @@
 import base64
+import importlib.metadata
 import io
 from pathlib import Path
 from typing import Any
@@ -44,7 +45,9 @@ def payload_of(client: TestClient, **extra: Any) -> str:
 def test_health(client: TestClient) -> None:
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    body = response.json()
+    assert body == {"status": "ok", "version": client.app.version}  # type: ignore[attr-defined]
+    assert body["version"] == importlib.metadata.version("vietqr-api")
 
 
 @pytest.mark.parametrize("template", TEMPLATES)
