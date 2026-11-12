@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useId, useMemo, useState } from "react";
+import { useId, useState } from "react";
 import { ApiErrorAlert } from "@/components/api-error";
 import { BankPicker } from "@/components/banks/bank-picker";
 import { findBank } from "@/lib/banks/find";
@@ -13,18 +13,30 @@ import {
   type StudioParams,
 } from "@/lib/studio/params";
 import { useStudioPayload } from "@/lib/studio/queries";
-import { useDebounced } from "@/lib/studio/use-debounced";
+import { Segmented } from "@/components/ui/segmented";
+import { Button } from "@/components/ui/button";
 import {
   validateStudio,
   type FieldError,
+  type FieldErrors,
   type FieldKey,
+  type GenerateBody,
 } from "@/lib/studio/validate";
 import { StudioPreview } from "./studio-preview";
 
 const inputClass =
   "h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[invalid=true]:border-red-600";
 
-const PREVIEW_DEBOUNCE_MS = 400;
+type QrType = "static" | "dynamic";
+
+/** Display order for the "what is missing" hint. */
+const HINT_ORDER: readonly FieldKey[] = [
+  "bank",
+  "account",
+  "amount",
+  "description",
+  "size",
+];
 
 function Field({
   label,
@@ -77,35 +89,54 @@ export function Studio({ initial }: { initial: StudioParams }) {
   const t = useTranslations("Studio");
   const [params, setParams] = useState(initial);
   const [touched, setTouched] = useState<ReadonlySet<FieldKey>>(new Set());
+  const [qrType, setQrType] = useState<QrType>(
+    initial.amount ? "dynamic" : "static",
+  );
+  // What the last Generate click asked for; nothing is requested before the first click.
+  const [generated, setGenerated] = useState<{
+    request: GenerateBody;
+    snapshot: string;
+  } | null>(null);
   const banks = useBanks();
+  const hintId = useId();
 
   const set = <K extends keyof StudioParams>(k: K, v: StudioParams[K]) =>
     setParams((p) => ({ ...p, [k]: v }));
   const touch = (k: FieldKey) => setTouched((s) => new Set(s).add(k));
 
-  const binFor = (p: StudioParams) =>
-    findBank(banks.data ?? [], p.bank)?.bin ?? null;
+  // A static QR never carries the amount; it stays in `params` so switching back restores it.
+  const effective: StudioParams =
+    qrType === "static" ? { ...params, amount: "" } : params;
+  const bin = findBank(banks.data ?? [], params.bank)?.bin ?? null;
+  const validation = validateStudio(effective, bin);
+  const errors: FieldErrors = validation.ok ? {} : { ...validation.errors };
+  if (qrType === "dynamic" && !effective.amount.trim() && !errors.amount)
+    errors.amount = { code: "required" };
+  const valid = Object.keys(errors).length === 0;
+  const request = validation.ok && valid ? validation.request : null;
 
   // Field errors are shown for touched fields; the catalog must be loaded to judge the bank.
-  const live = validateStudio(params, binFor(params));
   const errorText = (key: FieldKey): string | undefined => {
-    if (live.ok || !touched.has(key)) return undefined;
+    if (!touched.has(key)) return undefined;
     if (key === "bank" && !banks.data) return undefined;
-    const e: FieldError | undefined = live.errors[key];
+    const e: FieldError | undefined = errors[key];
     return e
       ? t(`errors.${e.code}`, { min: e.min ?? 0, max: e.max ?? 0 })
       : undefined;
   };
-
-  const debounced = useDebounced(params, PREVIEW_DEBOUNCE_MS);
-  const debouncedValidation = useMemo(
-    () => validateStudio(debounced, binFor(debounced)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [debounced, banks.data],
+  const missing = HINT_ORDER.filter((k) => errors[k]).map((k) =>
+    t(`fields.${k}`),
   );
-  const request = debouncedValidation.ok ? debouncedValidation.request : null;
-  const preview = useStudioPayload(request);
+
+  const snapshot = JSON.stringify(effective);
+  const outdated = generated !== null && generated.snapshot !== snapshot;
+  const preview = useStudioPayload(generated?.request ?? null);
   const showAll = () => setTouched(new Set<FieldKey>(FORM_FIELD_KEYS));
+
+  function onGenerate() {
+    if (!request) return showAll();
+    setGenerated({ request, snapshot });
+  }
 
   return (
     <div className="space-y-6">
@@ -120,9 +151,22 @@ export function Studio({ initial }: { initial: StudioParams }) {
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
-            showAll();
+            onGenerate();
           }}
         >
+          <Segmented
+            name="qrType"
+            aria-label={t("type.label")}
+            value={qrType}
+            onValueChange={setQrType}
+            options={[
+              { value: "static", label: t("type.static") },
+              { value: "dynamic", label: t("type.dynamic") },
+            ]}
+          />
+          <p className="text-xs text-muted-foreground">
+            {t(`type.note.${qrType}`)}
+          </p>
           {banks.error ? <ApiErrorAlert error={banks.error} /> : null}
           <Field label={t("fields.bank")} error={errorText("bank")}>
             {(a) => (
@@ -151,23 +195,25 @@ export function Studio({ initial }: { initial: StudioParams }) {
               />
             )}
           </Field>
-          <Field
-            label={t("fields.amount")}
-            hint={t("hints.amount")}
-            error={errorText("amount")}
-          >
-            {(a) => (
-              <input
-                {...a}
-                className={inputClass}
-                autoComplete="off"
-                inputMode="numeric"
-                value={params.amount}
-                onChange={(e) => set("amount", e.target.value)}
-                onBlur={() => touch("amount")}
-              />
-            )}
-          </Field>
+          {qrType === "dynamic" ? (
+            <Field
+              label={t("fields.amount")}
+              hint={t("hints.amount")}
+              error={errorText("amount")}
+            >
+              {(a) => (
+                <input
+                  {...a}
+                  className={inputClass}
+                  autoComplete="off"
+                  inputMode="numeric"
+                  value={params.amount}
+                  onChange={(e) => set("amount", e.target.value)}
+                  onBlur={() => touch("amount")}
+                />
+              )}
+            </Field>
+          ) : null}
           <Field
             label={t("fields.description")}
             hint={t("hints.description")}
@@ -275,13 +321,29 @@ export function Studio({ initial }: { initial: StudioParams }) {
               </Field>
             </div>
           </details>
+
+          <div className="space-y-2">
+            <Button
+              type="submit"
+              disabled={!valid}
+              aria-describedby={valid ? undefined : hintId}
+            >
+              {t("generate")}
+            </Button>
+            {!valid ? (
+              <p id={hintId} className="text-xs text-muted-foreground">
+                {t("generateHint", { fields: missing.join(", ") })}
+              </p>
+            ) : null}
+          </div>
         </form>
 
         <StudioPreview
-          payload={request ? (preview.data ?? null) : null}
-          params={params}
-          error={request ? preview.error : null}
-          pending={request !== null && preview.isFetching}
+          payload={preview.data ?? null}
+          params={effective}
+          error={generated ? preview.error : null}
+          pending={generated !== null && preview.isFetching}
+          outdated={outdated}
         />
       </div>
     </div>

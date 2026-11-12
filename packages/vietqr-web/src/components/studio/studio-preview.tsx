@@ -3,6 +3,7 @@
 import { Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ApiErrorAlert } from "@/components/api-error";
+import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import type { StudioParams } from "@/lib/studio/params";
 import type { StudioPayload } from "@/lib/studio/queries";
@@ -18,6 +19,8 @@ export type StudioPreviewProps = {
   error?: unknown;
   /** A generate call is in flight. */
   pending?: boolean;
+  /** The form changed since this result was generated. */
+  outdated?: boolean;
 };
 
 export const imageHref = (request: StudioPayload["request"]) =>
@@ -29,6 +32,7 @@ export function StudioPreview({
   params,
   error,
   pending,
+  outdated,
 }: StudioPreviewProps) {
   const t = useTranslations("Studio.preview");
   return (
@@ -37,6 +41,9 @@ export function StudioPreview({
         {t("title")}
       </h2>
       {error ? <ApiErrorAlert error={error} /> : null}
+      {!error && payload && outdated ? (
+        <Badge variant="warning">{t("outdated")}</Badge>
+      ) : null}
       {!error && payload ? (
         <div className="space-y-3" aria-busy={pending ? "true" : "false"}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -45,7 +52,7 @@ export function StudioPreview({
             alt={t("alt")}
             className={
               "mx-auto max-h-[32rem] w-auto max-w-full rounded-md border border-input bg-white" +
-              (pending ? " opacity-60" : "")
+              (pending || outdated ? " opacity-60" : "")
             }
           />
           <div

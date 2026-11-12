@@ -33,6 +33,17 @@
     "title": "Studio",
     "intro": "Tạo mã VietQR: chọn ngân hàng, nhập thông tin thanh toán và tải ảnh về.",
     "formLabel": "Thông tin mã QR",
+    "generate": "Tạo mã",
+    "generateHint": "Cần hoàn tất trước: {fields}.",
+    "type": {
+      "label": "Loại mã QR",
+      "static": "Tĩnh",
+      "dynamic": "Động",
+      "note": {
+        "static": "Không có số tiền: người thanh toán tự nhập trong ứng dụng ngân hàng.",
+        "dynamic": "Mang số tiền cố định mà người thanh toán không thể thay đổi."
+      }
+    },
     "advanced": "Tùy chọn nâng cao",
     "fields": {
       "bank": "Ngân hàng",
@@ -46,7 +57,7 @@
       "accountName": "Tên tài khoản"
     },
     "hints": {
-      "amount": "Số tiền VND nguyên, chỉ gồm chữ số. Để trống để tạo QR tĩnh: người thanh toán tự nhập số tiền.",
+      "amount": "Số tiền VND nguyên, chỉ gồm chữ số.",
       "description": "Không bắt buộc.",
       "size": "Từ 100 đến 2000. Áp dụng cho mẫu chỉ có mã QR. Mặc định 500."
     },
@@ -69,7 +80,8 @@
     },
     "preview": {
       "title": "Xem trước",
-      "empty": "Điền biểu mẫu để xem mã QR tại đây.",
+      "empty": "Điền biểu mẫu và bấm Tạo mã để xem mã QR tại đây.",
+      "outdated": "Đã cũ",
       "loading": "Đang tạo mã QR…",
       "alt": "Thẻ VietQR đã tạo",
       "qrType": "Loại QR",

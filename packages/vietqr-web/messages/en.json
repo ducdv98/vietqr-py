@@ -33,6 +33,17 @@
     "title": "Studio",
     "intro": "Create a VietQR code: choose a bank, enter the payment details and download the image.",
     "formLabel": "QR details",
+    "generate": "Generate",
+    "generateHint": "Complete first: {fields}.",
+    "type": {
+      "label": "QR type",
+      "static": "Static",
+      "dynamic": "Dynamic",
+      "note": {
+        "static": "No amount: the payer enters it in their banking app.",
+        "dynamic": "Carries a fixed amount that the payer cannot change."
+      }
+    },
     "advanced": "Advanced options",
     "fields": {
       "bank": "Bank",
@@ -46,7 +57,7 @@
       "accountName": "Account name"
     },
     "hints": {
-      "amount": "Whole VND, digits only. Leave empty for a static QR: the payer enters the amount.",
+      "amount": "Whole VND, digits only.",
       "description": "Optional.",
       "size": "100 to 2000. Applies to the QR only template. Default 500."
     },
@@ -69,7 +80,8 @@
     },
     "preview": {
       "title": "Preview",
-      "empty": "Fill in the form to see your QR code here.",
+      "empty": "Fill in the form and press Generate to see your QR code here.",
+      "outdated": "Outdated",
       "loading": "Generating QR…",
       "alt": "Generated VietQR card",
       "qrType": "QR type",
