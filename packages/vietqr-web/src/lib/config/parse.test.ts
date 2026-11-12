@@ -96,4 +96,14 @@ describe("parseConfig", () => {
       parseConfig({ ...base, VIETQR_FOOTER_LINKS: "NoUrl" }),
     ).toThrow(/VIETQR_FOOTER_LINKS/);
   });
+
+  it("defaults the upload limit to the API's 8 MiB and accepts an override", () => {
+    expect(parseConfig(base).maxUploadBytes).toBe(8 * 1024 * 1024);
+    expect(
+      parseConfig({ ...base, VIETQR_MAX_UPLOAD_BYTES: "1000" }).maxUploadBytes,
+    ).toBe(1000);
+    expect(() =>
+      parseConfig({ ...base, VIETQR_MAX_UPLOAD_BYTES: "0" }),
+    ).toThrow(ConfigError);
+  });
 });

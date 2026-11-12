@@ -3,3 +3,5 @@ node_modules
 pnpm-lock.yaml
 next-env.d.ts
 coverage
+src/lib/api/schema.d.ts
+src/lib/api/version.ts

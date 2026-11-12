@@ -11,6 +11,8 @@ export type FooterLink = { label: string; href: string };
 
 export type AppConfig = {
   apiUrl: string;
+  /** Largest request body the /api proxy accepts; keep equal to the API's VIETQR_MAX_UPLOAD_BYTES. */
+  maxUploadBytes: number;
   appName: string;
   appLogo: string | null;
   locales: Locale[];
@@ -74,6 +76,7 @@ const envSchema = z.object({
       .url({ message: "must be an absolute URL, e.g. http://localhost:8000" })
       .transform((u) => u.replace(/\/+$/, "")),
   ),
+  VIETQR_MAX_UPLOAD_BYTES: optional(z.coerce.number().int().positive()),
   VIETQR_APP_NAME: optional(z.string().trim().min(1)),
   VIETQR_APP_LOGO: optional(z.string().trim()),
   VIETQR_LOCALES: optional(list(LOCALES)),
@@ -105,6 +108,7 @@ export function parseConfig(
   }
   return {
     apiUrl: v.VIETQR_API_URL,
+    maxUploadBytes: v.VIETQR_MAX_UPLOAD_BYTES ?? 8 * 1024 * 1024,
     appName: v.VIETQR_APP_NAME ?? "VietQR",
     appLogo: v.VIETQR_APP_LOGO || null,
     locales,
