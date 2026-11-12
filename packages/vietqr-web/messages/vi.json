@@ -93,6 +93,9 @@
         "static": "QR tĩnh không chứa số tiền; người thanh toán tự nhập.",
         "dynamic": "QR động chứa số tiền ở trên."
       },
+      "payloadDetails": "Chi tiết Payload",
+      "scanHint": "Quét bằng ứng dụng ngân hàng để thanh toán.",
+      "storedNote": "Không có gì được lưu: mã QR được tạo theo yêu cầu và không lưu trên máy chủ.",
       "payload": "Payload",
       "download": "Tải PNG"
     },

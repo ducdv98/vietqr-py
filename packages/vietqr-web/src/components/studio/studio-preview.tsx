@@ -5,15 +5,22 @@ import { useTranslations } from "next-intl";
 import { ApiErrorAlert } from "@/components/api-error";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import type { StudioParams } from "@/lib/studio/params";
+import { Card, CardContent } from "@/components/ui/card";
+import { Segmented } from "@/components/ui/segmented";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  TEMPLATES,
+  type StudioParams,
+  type Template,
+} from "@/lib/studio/params";
 import type { StudioPayload } from "@/lib/studio/queries";
 import { CopyActions } from "./copy-actions";
 import { qrTypeOf, toQuery } from "@/lib/studio/validate";
 
 export type StudioPreviewProps = {
-  /** The generated Payload and Card image; null until the form is valid and generated. */
+  /** The generated Payload and Card image; null until the user has clicked Generate. */
   payload: StudioPayload | null;
-  /** The current form values (ticket 08 builds the Pay link from these). */
+  /** The current form values (the Pay link is built from these). */
   params: StudioParams;
   /** Error from the last generate call, if any. */
   error?: unknown;
@@ -21,76 +28,113 @@ export type StudioPreviewProps = {
   pending?: boolean;
   /** The form changed since this result was generated. */
   outdated?: boolean;
+  /** Switch the Template; the parent re-renders without another Generate. */
+  onTemplateChange?: (template: Template) => void;
+  /** Receives the section element so the parent can scroll to it. */
+  sectionRef?: React.Ref<HTMLElement>;
 };
 
 export const imageHref = (request: StudioPayload["request"]) =>
   `/api/v1/vietqr-core/image?${toQuery(request).toString()}`;
 
-/** Preview area: Card image, Payload and the PNG download. Actions slot in beside the download. */
+/** Result pane: Card image, Template chips, actions, Payload details and the privacy note. */
 export function StudioPreview({
   payload,
   params,
   error,
   pending,
   outdated,
+  onTemplateChange,
+  sectionRef,
 }: StudioPreviewProps) {
   const t = useTranslations("Studio.preview");
+  const tf = useTranslations("Studio");
   return (
-    <section aria-labelledby="studio-preview-title" className="space-y-3">
+    <section
+      ref={sectionRef}
+      aria-labelledby="studio-preview-title"
+      className="scroll-mt-20 space-y-3"
+    >
       <h2 id="studio-preview-title" className="text-lg font-semibold">
         {t("title")}
       </h2>
       {error ? <ApiErrorAlert error={error} /> : null}
-      {!error && payload && outdated ? (
-        <Badge variant="warning">{t("outdated")}</Badge>
-      ) : null}
       {!error && payload ? (
-        <div className="space-y-3" aria-busy={pending ? "true" : "false"}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={payload.qrDataURL}
-            alt={t("alt")}
-            className={
-              "mx-auto max-h-[32rem] w-auto max-w-full rounded-md border border-input bg-white" +
-              (pending || outdated ? " opacity-60" : "")
-            }
-          />
-          <div
-            className="flex flex-wrap items-center gap-2"
-            data-slot="actions"
-          >
-            <a
-              href={imageHref(payload.request)}
-              download
-              className={buttonVariants()}
+        <Card aria-busy={pending ? "true" : "false"}>
+          <CardContent className="space-y-4 p-5">
+            {outdated ? <Badge variant="warning">{t("outdated")}</Badge> : null}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={payload.qrDataURL}
+              alt={t("alt")}
+              className={
+                "mx-auto max-h-[32rem] w-auto max-w-full rounded-md border border-border bg-white" +
+                (pending || outdated ? " opacity-60" : "")
+              }
+            />
+            <Segmented
+              name="template"
+              aria-label={tf("fields.template")}
+              value={params.template}
+              onValueChange={(v) => onTemplateChange?.(v)}
+              options={TEMPLATES.map((tpl) => ({
+                value: tpl,
+                label: tf(`templates.${tpl}`),
+              }))}
+              className="flex-wrap"
+            />
+            <div
+              className="flex flex-wrap items-center gap-2"
+              data-slot="actions"
             >
-              <Download aria-hidden className="size-4" />
-              {t("download")}
-            </a>
-          </div>
-          <p data-testid="qr-type">
-            <span className="text-sm font-medium">{t("qrType")}: </span>
-            {t(`qrTypes.${qrTypeOf(payload.request)}`)}
-            <span className="block text-xs text-muted-foreground">
-              {t(`qrTypeNote.${qrTypeOf(payload.request)}`)}
-            </span>
-          </p>
-          <CopyActions payload={payload} params={params} />
-          <div>
-            <h3 className="text-sm font-medium">{t("payload")}</h3>
-            <code
-              data-testid="payload"
-              className="mt-1 block rounded-md bg-accent p-2 font-mono text-xs break-all"
-            >
-              {payload.qrCode}
-            </code>
-          </div>
-        </div>
+              <a
+                href={imageHref(payload.request)}
+                download
+                className={buttonVariants()}
+              >
+                <Download aria-hidden className="size-4" />
+                {t("download")}
+              </a>
+            </div>
+            <p data-testid="qr-type">
+              <span className="text-sm font-medium">{t("qrType")}: </span>
+              {t(`qrTypes.${qrTypeOf(payload.request)}`)}
+              <span className="block text-xs text-muted-foreground">
+                {t(`qrTypeNote.${qrTypeOf(payload.request)}`)}
+              </span>
+            </p>
+            <CopyActions
+              payload={payload}
+              params={params}
+              detailsLabel={t("payloadDetails")}
+              details={
+                <code
+                  data-testid="payload"
+                  className="block rounded-md bg-muted p-2 font-mono text-xs break-all"
+                >
+                  {payload.qrCode}
+                </code>
+              }
+            />
+            <p className="text-sm">{t("scanHint")}</p>
+            <p className="text-xs text-muted-foreground">{t("storedNote")}</p>
+          </CardContent>
+        </Card>
       ) : null}
       {!error && !payload ? (
-        <p className="text-sm text-muted-foreground" role="status">
-          {pending ? t("loading") : t("empty")}
-        </p>
+        pending ? (
+          <div role="status" className="space-y-2">
+            <Skeleton className="mx-auto h-64 w-64 max-w-full" />
+            <p className="text-sm text-muted-foreground">{t("loading")}</p>
+          </div>
+        ) : (
+          <p
+            className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground"
+            role="status"
+          >
+            {t("empty")}
+          </p>
+        )
       ) : null}
     </section>
   );

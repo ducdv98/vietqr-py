@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { ApiErrorAlert } from "@/components/api-error";
 import { BankPicker } from "@/components/banks/bank-picker";
 import { findBank } from "@/lib/banks/find";
@@ -9,8 +9,8 @@ import { useBanks } from "@/lib/banks/queries";
 import {
   FORM_FIELD_KEYS,
   SERVICE_TYPES,
-  TEMPLATES,
   type StudioParams,
+  type Template,
 } from "@/lib/studio/params";
 import { useStudioPayload } from "@/lib/studio/queries";
 import { Segmented } from "@/components/ui/segmented";
@@ -128,14 +128,32 @@ export function Studio({ initial }: { initial: StudioParams }) {
     t(`fields.${k}`),
   );
 
-  const snapshot = JSON.stringify(effective);
+  // The Template is the one change that re-renders without Generate, so it is not "outdated".
+  const snapshot = JSON.stringify({ ...effective, template: undefined });
   const outdated = generated !== null && generated.snapshot !== snapshot;
   const preview = useStudioPayload(generated?.request ?? null);
   const showAll = () => setTouched(new Set<FieldKey>(FORM_FIELD_KEYS));
 
+  const resultRef = useRef<HTMLElement>(null);
+  const [scrollTick, setScrollTick] = useState(0);
+  // On narrow screens the result sits below the form: bring it into view after Generate.
+  useEffect(() => {
+    if (scrollTick === 0) return;
+    if (window.matchMedia?.("(min-width: 64rem)").matches) return;
+    resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [scrollTick]);
+
   function onGenerate() {
     if (!request) return showAll();
     setGenerated({ request, snapshot });
+    setScrollTick((n) => n + 1);
+  }
+
+  function onTemplateChange(template: Template) {
+    set("template", template);
+    setGenerated((g) =>
+      g ? { ...g, request: { ...g.request, template } } : g,
+    );
   }
 
   return (
@@ -144,10 +162,10 @@ export function Studio({ initial }: { initial: StudioParams }) {
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="text-muted-foreground">{t("intro")}</p>
       </header>
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid items-start gap-8 lg:grid-cols-2">
         <form
           aria-label={t("formLabel")}
-          className="space-y-4"
+          className="space-y-4 rounded-xl border border-border bg-card p-5 text-card-foreground shadow-sm"
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
@@ -230,29 +248,6 @@ export function Studio({ initial }: { initial: StudioParams }) {
               />
             )}
           </Field>
-
-          <fieldset className="space-y-2">
-            <legend className="text-sm font-medium">
-              {t("fields.template")}
-            </legend>
-            <div className="flex flex-wrap gap-2">
-              {TEMPLATES.map((tpl) => (
-                <label
-                  key={tpl}
-                  className="flex cursor-pointer items-center gap-2 rounded-md border border-input px-3 py-2 text-sm has-[:checked]:bg-accent has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring"
-                >
-                  <input
-                    type="radio"
-                    name="template"
-                    value={tpl}
-                    checked={params.template === tpl}
-                    onChange={() => set("template", tpl)}
-                  />
-                  {t(`templates.${tpl}`)}
-                </label>
-              ))}
-            </div>
-          </fieldset>
 
           <details className="rounded-md border border-input p-3">
             <summary className="cursor-pointer text-sm font-medium">
@@ -344,6 +339,8 @@ export function Studio({ initial }: { initial: StudioParams }) {
           error={generated ? preview.error : null}
           pending={generated !== null && preview.isFetching}
           outdated={outdated}
+          onTemplateChange={onTemplateChange}
+          sectionRef={resultRef}
         />
       </div>
     </div>

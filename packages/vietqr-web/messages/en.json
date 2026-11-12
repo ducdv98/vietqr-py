@@ -93,6 +93,9 @@
         "static": "A static QR carries no amount; the payer enters it.",
         "dynamic": "A dynamic QR carries the amount above."
       },
+      "payloadDetails": "Payload details",
+      "scanHint": "Scan with your banking app to pay.",
+      "storedNote": "Nothing is stored: this QR is generated on request and not saved on the server.",
       "payload": "Payload",
       "download": "Download PNG"
     },

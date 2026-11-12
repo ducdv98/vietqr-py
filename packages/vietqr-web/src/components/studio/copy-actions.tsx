@@ -3,6 +3,7 @@
 import { Check, Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { Accordion } from "@/components/ui/accordion";
 import { buttonVariants } from "@/components/ui/button";
 import { useConfig } from "@/lib/config";
 import type { StudioParams } from "@/lib/studio/params";
@@ -14,10 +15,19 @@ type Kind = "payload" | "payLink" | "embedUrl";
 export type CopyActionsProps = {
   payload: StudioPayload;
   params: StudioParams;
+  /** Rendered at the top of the collapsed Payload details (the Payload text). */
+  details?: React.ReactNode;
+  /** Label of the collapsed section holding the details and the embed URL. */
+  detailsLabel?: string;
 };
 
 /** Copy Payload, Pay link (only when the Pay page is enabled) and the GET /image embed URL. */
-export function CopyActions({ payload, params }: CopyActionsProps) {
+export function CopyActions({
+  payload,
+  params,
+  details,
+  detailsLabel,
+}: CopyActionsProps) {
   const t = useTranslations("Studio.copy");
   const { enabledPages, defaultTemplate } = useConfig();
   const [status, setStatus] = useState("");
@@ -59,16 +69,23 @@ export function CopyActions({ payload, params }: CopyActionsProps) {
               buildPayLink(window.location.origin, params, defaultTemplate),
             )
           : null}
-        {button("embedUrl", () =>
-          buildEmbedUrl(window.location.origin, payload.request),
-        )}
       </div>
-      <p
-        data-testid="embed-warning"
-        className="text-xs text-amber-700 dark:text-amber-400"
-      >
-        {t("embedWarning")}
-      </p>
+      <Accordion summary={detailsLabel ?? t("actions.embedUrl")}>
+        <div className="space-y-2">
+          {details}
+          <div>
+            {button("embedUrl", () =>
+              buildEmbedUrl(window.location.origin, payload.request),
+            )}
+          </div>
+          <p
+            data-testid="embed-warning"
+            className="text-xs text-amber-700 dark:text-amber-400"
+          >
+            {t("embedWarning")}
+          </p>
+        </div>
+      </Accordion>
       <p role="status" aria-live="polite" className="text-sm">
         {status}
       </p>
