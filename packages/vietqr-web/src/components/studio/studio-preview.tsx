@@ -53,9 +53,12 @@ export function StudioPreview({
     <section
       ref={sectionRef}
       aria-labelledby="studio-preview-title"
-      className="scroll-mt-20 space-y-3"
+      className="scroll-mt-20 space-y-3 lg:sticky lg:top-20"
     >
-      <h2 id="studio-preview-title" className="text-lg font-semibold">
+      <h2
+        id="studio-preview-title"
+        className="text-xs font-semibold tracking-widest text-muted-foreground uppercase"
+      >
         {t("title")}
       </h2>
       {error ? <ApiErrorAlert error={error} /> : null}
@@ -68,7 +71,7 @@ export function StudioPreview({
               src={payload.qrDataURL}
               alt={t("alt")}
               className={
-                "mx-auto max-h-[32rem] w-auto max-w-full rounded-md border border-border bg-white" +
+                "mx-auto max-h-[32rem] w-auto max-w-full rounded-xl border border-border bg-white shadow-sm" +
                 (pending || outdated ? " opacity-60" : "")
               }
             />
@@ -110,7 +113,7 @@ export function StudioPreview({
               details={
                 <code
                   data-testid="payload"
-                  className="block rounded-md bg-muted p-2 font-mono text-xs break-all"
+                  className="block rounded-xl bg-slate-950 p-3 font-mono text-xs break-all text-slate-100"
                 >
                   {payload.qrCode}
                 </code>
@@ -129,7 +132,7 @@ export function StudioPreview({
           </div>
         ) : (
           <p
-            className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground"
+            className="rounded-2xl border border-dashed border-border bg-card/60 p-10 text-center text-sm text-muted-foreground"
             role="status"
           >
             {t("empty")}

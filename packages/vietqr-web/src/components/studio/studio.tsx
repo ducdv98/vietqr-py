@@ -25,7 +25,7 @@ import {
 import { StudioPreview } from "./studio-preview";
 
 const inputClass =
-  "h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[invalid=true]:border-red-600";
+  "h-11 w-full rounded-xl border border-input bg-background px-3 text-sm transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 aria-[invalid=true]:border-red-600";
 
 type QrType = "static" | "dynamic";
 
@@ -59,7 +59,7 @@ function Field({
     undefined;
   return (
     <div className="space-y-1">
-      <label htmlFor={id} className="text-sm font-medium">
+      <label htmlFor={id} className="text-sm font-medium text-muted-foreground">
         {label}
       </label>
       {children({
@@ -160,13 +160,13 @@ export function Studio({ initial }: { initial: StudioParams }) {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold">{t("title")}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground">{t("intro")}</p>
       </header>
-      <div className="grid items-start gap-8 lg:grid-cols-2">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <form
           aria-label={t("formLabel")}
-          className="space-y-4 rounded-xl border border-border bg-card p-5 text-card-foreground shadow-sm"
+          className="space-y-4 rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-sm"
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
@@ -250,7 +250,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
             )}
           </Field>
 
-          <details className="rounded-md border border-input p-3">
+          <details className="rounded-xl border border-dashed border-input bg-muted/40 p-3">
             <summary className="cursor-pointer text-sm font-medium">
               {t("advanced")}
             </summary>
@@ -321,6 +321,8 @@ export function Studio({ initial }: { initial: StudioParams }) {
           <div className="space-y-2">
             <Button
               type="submit"
+              size="lg"
+              className="w-full"
               disabled={!valid}
               aria-describedby={valid ? undefined : hintId}
             >

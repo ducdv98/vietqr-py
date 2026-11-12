@@ -23,8 +23,9 @@ export function AppShell({
       >
         {t("Shell.skipToContent")}
       </a>
-      <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
+      <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
+        <div className="h-0.5 bg-gradient-to-r from-red-500 via-primary to-primary" />
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
           <Link
             href="/"
             className="flex items-center gap-2 text-lg font-semibold tracking-tight text-primary"
@@ -40,7 +41,7 @@ export function AppShell({
               <Link
                 key={item.page}
                 href={item.href}
-                className="rounded-md px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="rounded-lg px-3 py-1.5 font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-primary"
               >
                 {t(`Nav.${item.labelKey}`)}
               </Link>
@@ -52,11 +53,11 @@ export function AppShell({
           </div>
         </div>
       </header>
-      <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
         {children}
       </main>
-      <footer className="border-t border-border text-sm text-muted-foreground">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-4 px-4 py-3">
+      <footer className="border-t border-border bg-card/60 text-sm text-muted-foreground">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-3">
           <nav aria-label={t("Footer.label")} className="flex flex-wrap gap-4">
             {config.footerLinks.map((l) => (
               <a key={l.href} href={l.href} className="hover:underline">
