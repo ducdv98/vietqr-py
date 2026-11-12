@@ -51,7 +51,7 @@
     "retry": "Try again",
     "listLabel": "Banks",
     "openInStudio": "Create QR in Studio",
-    "openInStudioFor": "Create QR with {name} in Studio",
+    "openInStudioFor": "Create QR in Studio: {name}",
     "viewDetails": "Details",
     "back": "All banks",
     "fields": {

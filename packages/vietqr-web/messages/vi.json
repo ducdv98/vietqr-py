@@ -51,7 +51,7 @@
     "retry": "Thử lại",
     "listLabel": "Ngân hàng",
     "openInStudio": "Tạo QR trong Studio",
-    "openInStudioFor": "Tạo QR với {name} trong Studio",
+    "openInStudioFor": "Tạo QR trong Studio: {name}",
     "viewDetails": "Chi tiết",
     "back": "Tất cả ngân hàng",
     "fields": {
