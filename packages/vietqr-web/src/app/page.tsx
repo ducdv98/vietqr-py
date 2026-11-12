@@ -1,15 +1,16 @@
-import { getTranslations } from "next-intl/server";
+import { Studio } from "@/components/studio/studio";
 import { getConfig } from "@/lib/config/server";
+import { defaultParams, parseParams } from "@/lib/studio/params";
 
-export default async function HomePage() {
-  const t = await getTranslations("Home");
-  const { appName, defaultTemplate } = getConfig();
-  return (
-    <section>
-      <h1 className="text-2xl font-semibold">{appName}</h1>
-      <p className="text-muted-foreground">
-        {t("placeholder", { template: defaultTemplate })}
-      </p>
-    </section>
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const { defaultTemplate } = getConfig();
+  const initial = parseParams(
+    await searchParams,
+    defaultParams(defaultTemplate),
   );
+  return <Studio initial={initial} />;
 }

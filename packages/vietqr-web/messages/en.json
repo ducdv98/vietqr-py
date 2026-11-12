@@ -21,8 +21,51 @@
     "checking": "Checking API…",
     "outdated": "API v{apiVersion} is older than the client expects (v{expected}). Some features may not work."
   },
-  "Home": {
-    "placeholder": "Studio placeholder (default Template: {template})."
+  "Studio": {
+    "title": "Studio",
+    "intro": "Create a VietQR code: choose a bank, enter the payment details and download the image.",
+    "formLabel": "QR details",
+    "advanced": "Advanced options",
+    "fields": {
+      "bank": "Bank",
+      "account": "Account number",
+      "amount": "Amount (VND)",
+      "description": "Description",
+      "template": "Template",
+      "serviceType": "Service type",
+      "billNumber": "Bill number",
+      "size": "Size (pixels)",
+      "accountName": "Account name"
+    },
+    "hints": {
+      "amount": "Whole VND, digits only.",
+      "size": "100 to 2000. Applies to the QR only template. Default 500."
+    },
+    "templates": {
+      "compact": "Compact card",
+      "print": "Print sheet",
+      "qr_only": "QR only"
+    },
+    "serviceTypes": {
+      "account": "Bank account",
+      "card": "Bank card"
+    },
+    "errors": {
+      "required": "This field is required.",
+      "unknownBank": "Choose a bank from the list.",
+      "notDigits": "Use digits only.",
+      "notPositive": "The amount must be greater than 0.",
+      "tooLong": "At most {max} characters.",
+      "outOfRange": "Enter a number from {min} to {max}."
+    },
+    "preview": {
+      "title": "Preview",
+      "empty": "Fill in the form to see your QR code here.",
+      "loading": "Generating QR…",
+      "alt": "Generated VietQR card",
+      "payload": "Payload",
+      "download": "Download PNG"
+    }
   },
   "Errors": {
     "technicalDetail": "Technical detail",

@@ -21,8 +21,51 @@
     "checking": "Đang kiểm tra API…",
     "outdated": "API v{apiVersion} cũ hơn phiên bản máy khách cần (v{expected}). Một số tính năng có thể không hoạt động."
   },
-  "Home": {
-    "placeholder": "Trang Studio tạm thời (Mẫu mặc định: {template})."
+  "Studio": {
+    "title": "Studio",
+    "intro": "Tạo mã VietQR: chọn ngân hàng, nhập thông tin thanh toán và tải ảnh về.",
+    "formLabel": "Thông tin mã QR",
+    "advanced": "Tùy chọn nâng cao",
+    "fields": {
+      "bank": "Ngân hàng",
+      "account": "Số tài khoản",
+      "amount": "Số tiền (VND)",
+      "description": "Nội dung",
+      "template": "Mẫu",
+      "serviceType": "Loại dịch vụ",
+      "billNumber": "Số hóa đơn",
+      "size": "Kích thước (pixel)",
+      "accountName": "Tên tài khoản"
+    },
+    "hints": {
+      "amount": "Số tiền VND nguyên, chỉ gồm chữ số.",
+      "size": "Từ 100 đến 2000. Áp dụng cho mẫu chỉ có mã QR. Mặc định 500."
+    },
+    "templates": {
+      "compact": "Thẻ gọn",
+      "print": "Bản in",
+      "qr_only": "Chỉ mã QR"
+    },
+    "serviceTypes": {
+      "account": "Tài khoản ngân hàng",
+      "card": "Thẻ ngân hàng"
+    },
+    "errors": {
+      "required": "Vui lòng nhập trường này.",
+      "unknownBank": "Hãy chọn một ngân hàng trong danh sách.",
+      "notDigits": "Chỉ nhập chữ số.",
+      "notPositive": "Số tiền phải lớn hơn 0.",
+      "tooLong": "Tối đa {max} ký tự.",
+      "outOfRange": "Nhập số từ {min} đến {max}."
+    },
+    "preview": {
+      "title": "Xem trước",
+      "empty": "Điền biểu mẫu để xem mã QR tại đây.",
+      "loading": "Đang tạo mã QR…",
+      "alt": "Thẻ VietQR đã tạo",
+      "payload": "Payload",
+      "download": "Tải PNG"
+    }
   },
   "Errors": {
     "technicalDetail": "Chi tiết kỹ thuật",
