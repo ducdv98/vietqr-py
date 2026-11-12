@@ -74,7 +74,7 @@ export function PayView({ params }: { params: StudioParams }) {
     );
 
   const { bank, request: req } = resolved;
-  const amount = formatVnd(req.amount ?? "0", locale);
+  const amount = req.amount ? formatVnd(req.amount, locale) : null;
   return (
     <article className="mx-auto max-w-md space-y-5" aria-labelledby="pay-title">
       <h1 id="pay-title" className="text-2xl font-semibold">
@@ -116,7 +116,11 @@ export function PayView({ params }: { params: StudioParams }) {
         </div>
         <div>
           <dt className="text-sm text-muted-foreground">{t("amount")}</dt>
-          <dd className="text-2xl font-semibold">{amount}</dd>
+          {amount ? (
+            <dd className="text-2xl font-semibold">{amount}</dd>
+          ) : (
+            <dd data-testid="pay-no-amount">{t("noAmount")}</dd>
+          )}
         </div>
         {req.description ? (
           <div>

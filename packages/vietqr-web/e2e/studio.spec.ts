@@ -37,6 +37,35 @@ test("dynamic QR: preview shows the Payload with the amount and bank", async ({
   await expect(
     page.getByRole("img", { name: "Generated VietQR card" }),
   ).toBeVisible();
+  expect(text).toContain("010212"); // tag 01 = 12: dynamic
+  await expect(page.getByTestId("qr-type")).toContainText("QR type: Dynamic");
+});
+
+test("static QR: no amount and no description still previews, as QR type static", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(async () => {
+    await page.getByRole("combobox", { name: "Bank" }).fill("vietcom");
+    await page
+      .getByRole("option", { name: /^Vietcombank/ })
+      .click({ timeout: 1000 });
+  }).toPass();
+  await page.getByLabel("Account number").fill("0123456789");
+  const payload = payloadText(page);
+  await expect(payload).toBeVisible();
+  const text = (await payload.textContent())!;
+  expect(text).toContain("010211"); // tag 01 = 11: static
+  expect(text).toContain("5303704" + "5802VN"); // currency then country: no tag 54 (amount) between
+  await expect(page.getByTestId("qr-type")).toContainText("QR type: Static");
+  await expect(
+    page.getByRole("img", { name: "Generated VietQR card" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Amount (VND)")).toHaveValue("");
+  // Embed URL carries no amount.
+  await expect(
+    page.getByRole("link", { name: "Download PNG" }),
+  ).not.toHaveAttribute("href", /amount=/);
 });
 
 test("query string prefills the form and renders immediately", async ({

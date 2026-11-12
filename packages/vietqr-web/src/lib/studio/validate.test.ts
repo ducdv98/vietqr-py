@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { defaultParams, type StudioParams } from "./params";
-import { toQuery, validateStudio } from "./validate";
+import { qrTypeOf, toQuery, validateStudio } from "./validate";
 
 const valid: StudioParams = {
   ...defaultParams(),
@@ -49,17 +49,33 @@ describe("validateStudio", () => {
     });
   });
 
-  it("requires bank, account, amount and description", () => {
+  it("requires only bank and account", () => {
     const r = validateStudio(defaultParams(), null);
     expect(r).toEqual({
       ok: false,
       errors: {
         bank: { code: "required" },
         account: { code: "required" },
-        amount: { code: "required" },
-        description: { code: "required" },
       },
     });
+  });
+
+  it("allows an empty amount and description: a static QR", () => {
+    const r = validateStudio(
+      { ...valid, amount: "  ", description: "" },
+      "970436",
+    );
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.request).not.toHaveProperty("amount");
+    expect(r.request).not.toHaveProperty("description");
+    expect(toQuery(r.request).has("amount")).toBe(false);
+    expect(toQuery(r.request).has("description")).toBe(false);
+  });
+
+  it("keeps a description on a static QR", () => {
+    const r = validateStudio({ ...valid, amount: "" }, "970436");
+    expect(r.ok && r.request.description).toBe("Lunch");
   });
 
   it("flags a bank that is not in the catalog", () => {
@@ -122,5 +138,14 @@ describe("toQuery", () => {
     expect(toQuery(r.request).toString()).toBe(
       "bankBin=970436&accountNo=0123456789&amount=50000&description=Lunch&template=compact&serviceType=account&format=png&size=500",
     );
+  });
+});
+
+describe("qrTypeOf", () => {
+  it("is dynamic with an amount and static without", () => {
+    const dynamic = validateStudio(valid, "970436");
+    const fixed = validateStudio({ ...valid, amount: "" }, "970436");
+    expect(dynamic.ok && qrTypeOf(dynamic.request)).toBe("dynamic");
+    expect(fixed.ok && qrTypeOf(fixed.request)).toBe("static");
   });
 });

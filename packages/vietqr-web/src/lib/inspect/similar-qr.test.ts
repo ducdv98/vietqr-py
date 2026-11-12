@@ -14,6 +14,17 @@ describe("createSimilarHref", () => {
       "/?bank=VCB&account=0011004&amount=50000&description=cafe+%26+tra",
     );
   });
+  it("opens Studio without an amount for a static QR", () => {
+    expect(
+      createSimilarHref({
+        bankBin: "970436",
+        bankInfo: { code: "VCB", bin: "970436" },
+        accountNo: "0011004",
+        amount: null,
+        description: null,
+      }),
+    ).toBe("/?bank=VCB&account=0011004");
+  });
   it("falls back to the BIN for an unknown bank and omits empty fields", () => {
     expect(
       createSimilarHref({

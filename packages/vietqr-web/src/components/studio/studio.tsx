@@ -170,6 +170,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
           </Field>
           <Field
             label={t("fields.description")}
+            hint={t("hints.description")}
             error={errorText("description")}
           >
             {(a) => (

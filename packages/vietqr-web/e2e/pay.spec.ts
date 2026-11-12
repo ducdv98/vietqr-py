@@ -41,6 +41,22 @@ test.describe("pay enabled", () => {
     await expect(qr).toHaveAttribute("src", /^data:image\/png/);
   });
 
+  test("a link without an amount shows no amount and tells the payer to enter it", async ({
+    page,
+  }) => {
+    const res = await page.goto("/pay?bank=VCB&account=0123456789&name=An");
+    expect(res?.status()).toBe(200);
+    await expect(page.getByTestId("pay-bank")).toHaveText(/Vietcombank/);
+    await expect(page.getByText("0123456789")).toBeVisible();
+    await expect(page.getByTestId("pay-no-amount")).toContainText(
+      "enter the amount yourself",
+    );
+    await expect(page.getByText(/₫/)).toHaveCount(0);
+    await expect(
+      page.getByRole("img", { name: "VietQR code for this payment" }),
+    ).toHaveAttribute("src", /^data:image\/png/);
+  });
+
   for (const scheme of ["light", "dark"] as const) {
     test(`pay page has no axe violations (${scheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: scheme });

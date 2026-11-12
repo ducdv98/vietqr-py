@@ -29,13 +29,13 @@ const params = parseParams(
   defaultParams(),
 );
 
-const view = (locale: "en" | "vi") =>
+const view = (locale: "en" | "vi", p = params) =>
   render(
     <NextIntlClientProvider
       locale={locale}
       messages={locale === "en" ? en : vi_}
     >
-      <PayView params={params} />
+      <PayView params={p} />
     </NextIntlClientProvider>,
   );
 
@@ -47,5 +47,26 @@ describe("PayView amount", () => {
   it("uses Vietnamese grouping for vi", () => {
     view("vi");
     expect(screen.getByText(/^1\.234\.567\s?₫$/)).toBeInTheDocument();
+  });
+});
+
+describe("PayView without an amount (static QR)", () => {
+  const staticParams = parseParams(
+    "bank=VCB&account=0123456789",
+    defaultParams(),
+  );
+  it("shows no amount and explains that the payer enters it", () => {
+    view("en", staticParams);
+    expect(screen.getByTestId("pay-no-amount")).toHaveTextContent(
+      /static QR.*enter the amount yourself/,
+    );
+    expect(screen.queryByText(/₫/)).toBeNull();
+    expect(screen.getByText("0123456789")).toBeInTheDocument();
+  });
+  it("is localized in Vietnamese", () => {
+    view("vi", staticParams);
+    expect(screen.getByTestId("pay-no-amount")).toHaveTextContent(
+      /QR tĩnh.*tự nhập số tiền/,
+    );
   });
 });

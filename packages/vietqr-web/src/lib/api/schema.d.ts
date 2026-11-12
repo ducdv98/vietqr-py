@@ -199,6 +199,10 @@ export interface components {
          * GenerateRequest
          * @description Body of POST /generate and /image.
          *
+         *     Only bankBin and accountNo are required. A missing or blank amount makes a static QR
+         *     (the payer enters the amount); a given amount must be a positive whole number, so "0" is
+         *     rejected rather than treated as static. Description is optional.
+         *
          *     Every field is optional at the schema level so that a missing required field is reported
          *     by our own validation (code 01) instead of FastAPI's generic 422.
          */
@@ -207,13 +211,19 @@ export interface components {
             accountName?: string | null;
             /** Accountno */
             accountNo?: string | null;
-            /** Amount */
+            /**
+             * Amount
+             * @description Positive whole number of VND. Omit or leave blank for a static QR (the payer enters the amount). "0" is invalid.
+             */
             amount?: string | null;
             /** Bankbin */
             bankBin?: string | null;
             /** Billnumber */
             billNumber?: string | null;
-            /** Description */
+            /**
+             * Description
+             * @description Transfer note, up to 95 characters. Optional.
+             */
             description?: string | null;
             /**
              * Format
@@ -408,7 +418,9 @@ export interface operations {
             query?: {
                 bankBin?: string | null;
                 accountNo?: string | null;
+                /** @description Positive whole number of VND. Omit or leave blank for a static QR (the payer enters the amount). "0" is invalid. */
                 amount?: string | null;
+                /** @description Transfer note, up to 95 characters. Optional. */
                 description?: string | null;
                 accountName?: string | null;
                 template?: string | null;
@@ -481,7 +493,9 @@ export interface operations {
             query?: {
                 bankBin?: string | null;
                 accountNo?: string | null;
+                /** @description Positive whole number of VND. Omit or leave blank for a static QR (the payer enters the amount). "0" is invalid. */
                 amount?: string | null;
+                /** @description Transfer note, up to 95 characters. Optional. */
                 description?: string | null;
                 accountName?: string | null;
                 template?: string | null;

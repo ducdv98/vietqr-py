@@ -27,6 +27,23 @@ describe("resolvePay", () => {
     });
   });
 
+  it("resolves a link without an amount (a static QR)", () => {
+    const r = resolvePay(link("bank=VCB&account=0123456789"), banks);
+    expect(r.status).toBe("ok");
+    if (r.status !== "ok") return;
+    expect(r.request).not.toHaveProperty("amount");
+    expect(r.request).not.toHaveProperty("description");
+    expect(r.request).toMatchObject({ bankBin: "970436", template: "qr_only" });
+  });
+
+  it("still rejects a given amount of 0", () => {
+    const r = resolvePay(link("bank=VCB&account=1&amount=0"), banks);
+    expect(r).toEqual({
+      status: "invalid",
+      errors: { amount: { code: "notPositive" } },
+    });
+  });
+
   it("matches the bank by BIN or case-insensitive code", () => {
     const r = resolvePay(
       link("bank=970422&account=1&amount=1&description=x"),

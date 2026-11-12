@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import type { StudioParams } from "@/lib/studio/params";
 import type { StudioPayload } from "@/lib/studio/queries";
 import { CopyActions } from "./copy-actions";
-import { toQuery } from "@/lib/studio/validate";
+import { qrTypeOf, toQuery } from "@/lib/studio/validate";
 
 export type StudioPreviewProps = {
   /** The generated Payload and Card image; null until the form is valid and generated. */
@@ -61,6 +61,13 @@ export function StudioPreview({
               {t("download")}
             </a>
           </div>
+          <p data-testid="qr-type">
+            <span className="text-sm font-medium">{t("qrType")}: </span>
+            {t(`qrTypes.${qrTypeOf(payload.request)}`)}
+            <span className="block text-xs text-muted-foreground">
+              {t(`qrTypeNote.${qrTypeOf(payload.request)}`)}
+            </span>
+          </p>
           <CopyActions payload={payload} params={params} />
           <div>
             <h3 className="text-sm font-medium">{t("payload")}</h3>

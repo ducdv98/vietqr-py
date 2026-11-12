@@ -51,14 +51,15 @@ export function validateStudio(
   else if (account.length > LIMITS.maxAccountLength)
     errors.account = { code: "tooLong", max: LIMITS.maxAccountLength };
 
-  if (!amount) errors.amount = { code: "required" };
-  else if (!/^[0-9]+$/.test(amount)) errors.amount = { code: "notDigits" };
-  else if (amount.length > LIMITS.maxAmountDigits)
-    errors.amount = { code: "tooLong", max: LIMITS.maxAmountDigits };
-  else if (/^0+$/.test(amount)) errors.amount = { code: "notPositive" };
+  // An empty amount is valid: it makes a static QR (the payer enters the amount).
+  if (amount) {
+    if (!/^[0-9]+$/.test(amount)) errors.amount = { code: "notDigits" };
+    else if (amount.length > LIMITS.maxAmountDigits)
+      errors.amount = { code: "tooLong", max: LIMITS.maxAmountDigits };
+    else if (/^0+$/.test(amount)) errors.amount = { code: "notPositive" };
+  }
 
-  if (!description) errors.description = { code: "required" };
-  else if (description.length > LIMITS.maxDescriptionLength)
+  if (description.length > LIMITS.maxDescriptionLength)
     errors.description = {
       code: "tooLong",
       max: LIMITS.maxDescriptionLength,
@@ -80,13 +81,13 @@ export function validateStudio(
   const request: GenerateBody = {
     bankBin: bankBin!,
     accountNo: account,
-    amount,
-    description,
     template: params.template,
     serviceType: params.serviceType,
     format: "png",
     size,
   };
+  if (amount) request.amount = amount;
+  if (description) request.description = description;
   const billNumber = params.billNumber.trim();
   const accountName = params.accountName.trim();
   if (billNumber) request.billNumber = billNumber;
@@ -115,4 +116,9 @@ export function toQuery(request: GenerateBody): URLSearchParams {
     if (v !== undefined && v !== null && v !== "") sp.set(key, String(v));
   }
   return sp;
+}
+
+/** CONTEXT.md "QR type": a request with an amount is dynamic, without one it is static. */
+export function qrTypeOf(request: GenerateBody): "static" | "dynamic" {
+  return request.amount ? "dynamic" : "static";
 }
