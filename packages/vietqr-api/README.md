@@ -15,3 +15,6 @@ configured through `VIETQR_*` environment variables (host, port, assets director
 image size limits, docs switch).
 
 See the repository README for the endpoint list, the settings table, error codes and Docker usage.
+The [`vietqr-web`](../vietqr-web) client is built on this API; its generated client must match the
+OpenAPI schema, so after changing a route or model run `pnpm api:generate` in `packages/vietqr-web`
+(CI fails on drift).

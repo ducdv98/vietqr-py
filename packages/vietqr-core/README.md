@@ -34,4 +34,4 @@ print(info.bank_bin, info.account_no, info.amount)
 Images are produced by `vietqr_core.rendering` (`render_qr_png`, `render_card_png`,
 `render_print_png`) and read back with `vietqr_core.parsing.decoder.decode_image`.
 
-See the repository README for the HTTP API, Docker usage and the full documentation.
+See the repository README for the HTTP API, the web client, Docker usage and the full documentation.

@@ -1,15 +1,20 @@
 # vietqr-py
 
-Python toolkit for VietQR (NAPAS247 / EMVCo) payments. It builds and parses payment payloads,
+Toolkit for VietQR (NAPAS247 / EMVCo) payments. It builds and parses payment payloads,
 renders QR images and payment cards, reads QR codes back from images, and exposes all of it as an
-HTTP API. Everything runs offline; the bank catalog is bundled.
+HTTP API and a web client. Everything runs offline; the bank catalog is bundled.
 
-The repository is a [uv](https://docs.astral.sh/uv/) workspace with two packages:
+The repository holds three packages. `vietqr-core` and `vietqr-api` form a
+[uv](https://docs.astral.sh/uv/) workspace; `vietqr-web` is a separate pnpm project.
 
 | Package | What it is |
 | :-- | :-- |
 | [`vietqr-core`](packages/vietqr-core) | The library: payload builder and parser, PNG renderers, image decoder, bank catalog. |
 | [`vietqr-api`](packages/vietqr-api) | A FastAPI service built on `vietqr-core`, with a Docker image. |
+| [`vietqr-web`](packages/vietqr-web) | A Next.js web client for the API: Studio (create QR codes), Inspect (read them) and a bank browser. Vietnamese and English. |
+
+Domain terms (Payload, QR type, Template, Studio, Pay link, ...) are defined in
+[`CONTEXT.md`](CONTEXT.md); design decisions are recorded in [`docs/adr/`](docs/adr).
 
 ## Features
 
@@ -21,6 +26,10 @@ The repository is a [uv](https://docs.astral.sh/uv/) workspace with two packages
 - Bundled bank catalog, looked up by BIN or short code.
 - HTTP API with a uniform `{code, desc, data}` error envelope, upload size limits, CORS and
   security headers.
+- Web client with three pages: **Studio** (choose a static or dynamic QR type, a bank and a
+  template, then explicitly Generate), **Inspect** (paste a payload or upload an image to see what
+  a QR says) and **Banks** (browse the catalog). An optional **Pay link** page shows a QR to a
+  payer. The client stores nothing, and reaches the API through a same-origin proxy.
 
 ## Install
 
@@ -32,6 +41,31 @@ git clone <repo-url>
 cd vietqr-py
 uv sync
 ```
+
+## Web app quick start
+
+The full app (API plus web client) runs with Docker Compose. Only the web client is published; the
+API sits on an internal network:
+
+```bash
+cp .env.example .env   # optional; every variable has a default
+docker compose up --build
+```
+
+Open <http://localhost:3000> (change the port with `WEB_PORT`). See
+[Web client settings](#web-client-settings) to configure it.
+
+To develop the web client against a local API, start the API (see
+[API quick start](#api-quick-start)), then:
+
+```bash
+cd packages/vietqr-web
+pnpm install
+cp .env.example .env.local   # VIETQR_API_URL defaults to http://localhost:8000
+pnpm dev
+```
+
+Requires Node 24 and pnpm. More in [`packages/vietqr-web/README.md`](packages/vietqr-web/README.md).
 
 ## Library quick start
 
@@ -193,9 +227,32 @@ Every failure is `{"code": "...", "desc": "...", "data": null}`; success has cod
 | `07` | Payload is not a valid VietQR / EMVCo string | 400 |
 | `99` | Internal error (details are logged, never returned) | 500 |
 
+## Web client settings
+
+`vietqr-web` reads these at server start, so one image serves every deployment; invalid values stop
+the server with a clear error. The full list with comments is in
+[`packages/vietqr-web/.env.example`](packages/vietqr-web/.env.example).
+
+| Variable | Default | Meaning |
+| :-- | :-- | :-- |
+| `VIETQR_API_URL` | required | Base URL of `vietqr-api`. Server-side only; browsers reach the API through the web app's `/api/*` proxy. Compose sets it to `http://api:8080`. |
+| `VIETQR_MAX_UPLOAD_BYTES` | `8388608` (8 MiB) | Largest body the proxy accepts. Keep equal to the API's setting of the same name. |
+| `VIETQR_LOGO_HOSTS` | derived | Hosts the same-origin logo route may fetch bank logos from. Default: hosts of the catalog's logo URLs. |
+| `VIETQR_APP_NAME` | `VietQR` | Product name in the header and page title. |
+| `VIETQR_APP_LOGO` | none | Logo URL, or a path under `public/`. |
+| `VIETQR_LOCALES` | `vi,en` | Enabled locales. |
+| `VIETQR_DEFAULT_LOCALE` | first of `VIETQR_LOCALES` | Must be one of the enabled locales. |
+| `VIETQR_DEFAULT_TEMPLATE` | `compact` | `compact`, `print` or `qr_only`. |
+| `VIETQR_ENABLED_PAGES` | `studio,inspect,banks` | Any of `studio` (served at `/`), `inspect`, `banks`, `pay`. |
+| `VIETQR_FOOTER_LINKS` | none | `Label\|URL` pairs separated by semicolons. |
+
+`pay` is off by default: anyone can craft a Pay link (`/pay?bank=...&account=...`) for any account,
+so operators opt in. The Pay page is served with `Referrer-Policy: no-referrer` and `noindex`.
+
 ## Docker
 
-Build and run:
+Both packages have a Dockerfile. `docker compose up --build` (above) runs them together. The API
+image can also run alone:
 
 ```bash
 docker build -t vietqr-api .
@@ -203,7 +260,7 @@ docker run --rm -p 8080:8080 vietqr-api
 curl http://127.0.0.1:8080/health
 ```
 
-The image listens on `0.0.0.0:8080` (set through `VIETQR_HOST` and `VIETQR_PORT`) and runs as an
+The API image listens on `0.0.0.0:8080` (set through `VIETQR_HOST` and `VIETQR_PORT`) and runs as an
 unprivileged user with uid 10001. The image bundles `packages/vietqr-api/assets/` at `/app/assets`
 and sets `VIETQR_ASSETS_DIR` to it. To use your own brand assets instead, mount them read-only; the
 directory must be readable by that uid:
@@ -222,7 +279,10 @@ docker run --rm -p 8080:8080 \
   and only `/health` exists (no `/health/live` or `/health/ready`).
 - `POST /decode` rejects a request with two or more uploaded files (400, code `03`). In JSON, only
   strings starting with `data:` are treated as Data URLs, and an empty body returns code `01`.
-- CORS allows any origin.
+- CORS allows any origin. The web client does not rely on it: it calls the API through its own
+  same-origin proxy (ADR 0002).
+- The web client stores nothing (no accounts, history or browser storage of payment details). A Pay
+  link is the only way to keep a QR (ADR 0001).
 
 ## Development
 
@@ -233,6 +293,21 @@ uv run ruff check .
 uv run ruff format --check .
 uv run mypy packages/vietqr-core/src packages/vietqr-api/src
 ```
+
+Web client (from `packages/vietqr-web`):
+
+```bash
+pnpm install
+pnpm lint
+pnpm format:check
+pnpm typecheck
+pnpm test          # unit tests
+pnpm api:check     # generated API client matches the API's OpenAPI schema
+pnpm i18n:check    # locale files have the same keys
+pnpm test:e2e      # Playwright + axe; needs a running API (E2E_API_URL)
+```
+
+After changing the API's schema, run `pnpm api:generate` to refresh the generated client.
 
 The same commands run in CI (`.github/workflows/ci.yml`).
 
