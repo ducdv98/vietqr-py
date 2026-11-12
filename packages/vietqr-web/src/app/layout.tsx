@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
+import { ToastProvider } from "@/components/ui/toast";
 import { AppShell } from "@/components/layout/app-shell";
 import { THEME_INIT_SCRIPT } from "@/components/layout/theme-script";
 import { ConfigProvider } from "@/lib/config";
@@ -32,7 +33,9 @@ export default async function RootLayout({
         <NextIntlClientProvider>
           <ConfigProvider config={config}>
             <QueryProvider>
-              <AppShell config={config}>{children}</AppShell>
+              <ToastProvider>
+                <AppShell config={config}>{children}</AppShell>
+              </ToastProvider>
             </QueryProvider>
           </ConfigProvider>
         </NextIntlClientProvider>
