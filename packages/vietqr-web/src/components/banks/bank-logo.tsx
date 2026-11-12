@@ -3,9 +3,10 @@
 import { useState } from "react";
 
 /**
- * Bank logo from the catalog's `logo` URL (the API returns absolute URLs and serves no logo
- * route of its own). Decorative: the bank's name is always rendered next to it. Falls back to
- * the code when the URL is empty or fails to load. No referrer is sent to the logo host.
+ * Bank logo, loaded from this app's own /api/logos/<code> route (ADR 0003) so the browser never
+ * contacts the logo CDN. The catalog's `logo` URL is only used to know whether a logo exists;
+ * it is never requested by the browser. Decorative: the bank's name is always rendered next to
+ * it. Falls back to the code when the URL is empty or the logo fails to load.
  */
 export function BankLogo({
   logo,
@@ -30,7 +31,7 @@ export function BankLogo({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={logo}
+      src={`/api/logos/${encodeURIComponent(code)}`}
       alt=""
       loading="lazy"
       decoding="async"

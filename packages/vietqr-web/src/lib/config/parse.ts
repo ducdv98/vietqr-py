@@ -13,6 +13,8 @@ export type AppConfig = {
   apiUrl: string;
   /** Largest request body the /api proxy accepts; keep equal to the API's VIETQR_MAX_UPLOAD_BYTES. */
   maxUploadBytes: number;
+  /** Upstream hosts the same-origin logo route may fetch from; null derives them from the catalog. */
+  logoHosts: string[] | null;
   appName: string;
   appLogo: string | null;
   locales: Locale[];
@@ -48,6 +50,24 @@ const list = <T extends readonly [string, ...string[]]>(values: T) =>
     )
     .pipe(z.array(z.enum(values)).min(1, "must list at least one value"));
 
+const hostList = z
+  .string()
+  .transform((s) =>
+    s
+      .split(",")
+      .map((x) => x.trim().toLowerCase())
+      .filter(Boolean),
+  )
+  .pipe(
+    z
+      .array(
+        z
+          .string()
+          .regex(/^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$/, "must be bare hostnames"),
+      )
+      .min(1, "must list at least one host"),
+  );
+
 const footerLinks = z.string().transform((s, ctx) => {
   const links: FooterLink[] = [];
   for (const entry of s
@@ -77,6 +97,7 @@ const envSchema = z.object({
       .transform((u) => u.replace(/\/+$/, "")),
   ),
   VIETQR_MAX_UPLOAD_BYTES: optional(z.coerce.number().int().positive()),
+  VIETQR_LOGO_HOSTS: optional(hostList),
   VIETQR_APP_NAME: optional(z.string().trim().min(1)),
   VIETQR_APP_LOGO: optional(z.string().trim()),
   VIETQR_LOCALES: optional(list(LOCALES)),
@@ -109,6 +130,7 @@ export function parseConfig(
   return {
     apiUrl: v.VIETQR_API_URL,
     maxUploadBytes: v.VIETQR_MAX_UPLOAD_BYTES ?? 8 * 1024 * 1024,
+    logoHosts: v.VIETQR_LOGO_HOSTS ?? null,
     appName: v.VIETQR_APP_NAME ?? "VietQR",
     appLogo: v.VIETQR_APP_LOGO || null,
     locales,

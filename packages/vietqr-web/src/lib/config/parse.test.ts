@@ -16,6 +16,17 @@ describe("parseConfig", () => {
     expect(c.footerLinks).toEqual([]);
   });
 
+  it("parses the logo host allowlist, null when unset", () => {
+    expect(parseConfig(base).logoHosts).toBeNull();
+    expect(
+      parseConfig({ ...base, VIETQR_LOGO_HOSTS: "CDN.vietqr.io, img.x.com" })
+        .logoHosts,
+    ).toEqual(["cdn.vietqr.io", "img.x.com"]);
+    expect(() =>
+      parseConfig({ ...base, VIETQR_LOGO_HOSTS: "https://cdn.vietqr.io/" }),
+    ).toThrow(ConfigError);
+  });
+
   it("keeps the pay page off unless enabled", () => {
     expect(parseConfig(base).enabledPages).not.toContain("pay");
     const c = parseConfig({ ...base, VIETQR_ENABLED_PAGES: "studio, pay" });
