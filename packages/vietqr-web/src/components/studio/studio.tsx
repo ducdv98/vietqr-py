@@ -96,6 +96,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
   const [generated, setGenerated] = useState<{
     request: GenerateBody;
     snapshot: string;
+    params: StudioParams;
   } | null>(null);
   const banks = useBanks();
   const hintId = useId();
@@ -145,7 +146,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
 
   function onGenerate() {
     if (!request) return showAll();
-    setGenerated({ request, snapshot });
+    setGenerated({ request, snapshot, params: effective });
     setScrollTick((n) => n + 1);
   }
 
@@ -335,7 +336,11 @@ export function Studio({ initial }: { initial: StudioParams }) {
 
         <StudioPreview
           payload={preview.data ?? null}
-          params={effective}
+          params={
+            generated
+              ? { ...generated.params, template: effective.template }
+              : effective
+          }
           error={generated ? preview.error : null}
           pending={generated !== null && preview.isFetching}
           outdated={outdated}
