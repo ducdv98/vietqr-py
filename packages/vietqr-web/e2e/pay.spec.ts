@@ -31,7 +31,7 @@ test.describe("pay enabled", () => {
     expect(res?.status()).toBe(200);
     await expect(page.getByTestId("pay-bank")).toHaveText(/Vietcombank/);
     await expect(page.getByText("0123456789")).toBeVisible();
-    await expect(page.getByText("50.000 VND")).toBeVisible();
+    await expect(page.getByText("₫50,000")).toBeVisible();
     await expect(page.getByText("Lunch")).toBeVisible();
     await expect(page.getByRole("note")).toContainText(
       "Confirm the bank, account number and amount with the recipient",
@@ -39,9 +39,21 @@ test.describe("pay enabled", () => {
     const qr = page.getByRole("img", { name: "VietQR code for this payment" });
     await expect(qr).toBeVisible();
     await expect(qr).toHaveAttribute("src", /^data:image\/png/);
-    const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations).toEqual([]);
   });
+
+  for (const scheme of ["light", "dark"] as const) {
+    test(`pay page has no axe violations (${scheme})`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto(LINK);
+      await expect(
+        page.getByRole("img", { name: "VietQR code for this payment" }),
+      ).toBeVisible();
+      const results = await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+        .analyze();
+      expect(results.violations).toEqual([]);
+    });
+  }
 
   test("a Pay link copied from Studio opens /pay and shows the QR", async ({
     page,

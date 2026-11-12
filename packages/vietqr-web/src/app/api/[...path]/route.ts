@@ -4,7 +4,7 @@ import { resolveUpstream } from "@/lib/api/upstream";
 // Same-origin proxy to vietqr-api (ADR 0002). Read at request time, so the API URL is runtime env.
 export const dynamic = "force-dynamic";
 
-/** Matches the API's decode time budget; a hung upstream becomes a 504 instead of hanging. */
+/** Proxy-side cap on one upstream request; a hung upstream becomes a 504 instead of hanging. */
 const UPSTREAM_TIMEOUT_MS = 30_000;
 
 const HOP_BY_HOP = [

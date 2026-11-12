@@ -3,6 +3,7 @@
 import { Check, ChevronsUpDown, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useId, useMemo, useRef, useState } from "react";
+import { findBank } from "@/lib/banks/find";
 import { searchBanks } from "@/lib/banks/search";
 import type { Bank } from "@/lib/banks/queries";
 import { BankLogo } from "./bank-logo";
@@ -23,12 +24,6 @@ export type BankPickerProps = {
   disabled?: boolean;
   /** Shows a loading placeholder instead of the catalog. */
   loading?: boolean;
-};
-
-const findBank = (banks: readonly Bank[], v: string | null | undefined) => {
-  if (!v) return null;
-  const k = v.toLowerCase();
-  return banks.find((b) => b.bin === v || b.code.toLowerCase() === k) ?? null;
 };
 
 /**

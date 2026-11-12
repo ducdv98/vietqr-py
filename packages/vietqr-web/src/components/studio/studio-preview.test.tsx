@@ -62,7 +62,7 @@ describe("StudioPreview", () => {
     expect(screen.queryByRole("img")).toBeNull();
   });
 
-  describe("share actions", () => {
+  describe("copy actions", () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     beforeEach(() => {
       writeText.mockClear();

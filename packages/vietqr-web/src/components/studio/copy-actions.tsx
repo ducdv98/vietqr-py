@@ -7,18 +7,18 @@ import { buttonVariants } from "@/components/ui/button";
 import { useConfig } from "@/lib/config";
 import type { StudioParams } from "@/lib/studio/params";
 import type { StudioPayload } from "@/lib/studio/queries";
-import { buildEmbedUrl, buildPayLink } from "@/lib/studio/share";
+import { buildEmbedUrl, buildPayLink } from "@/lib/studio/copy";
 
 type Kind = "payload" | "payLink" | "embedUrl";
 
-export type ShareActionsProps = {
+export type CopyActionsProps = {
   payload: StudioPayload;
   params: StudioParams;
 };
 
 /** Copy Payload, Pay link (only when the Pay page is enabled) and the GET /image embed URL. */
-export function ShareActions({ payload, params }: ShareActionsProps) {
-  const t = useTranslations("Studio.share");
+export function CopyActions({ payload, params }: CopyActionsProps) {
+  const t = useTranslations("Studio.copy");
   const { enabledPages, defaultTemplate } = useConfig();
   const [status, setStatus] = useState("");
   const [copied, setCopied] = useState<Kind | null>(null);
@@ -51,7 +51,7 @@ export function ShareActions({ payload, params }: ShareActionsProps) {
   );
 
   return (
-    <div className="space-y-2" data-slot="share">
+    <div className="space-y-2" data-slot="copy">
       <div className="flex flex-wrap items-center gap-2">
         {button("payload", () => payload.qrCode)}
         {payEnabled

@@ -66,7 +66,7 @@
       "payload": "Payload",
       "download": "Tải PNG"
     },
-    "share": {
+    "copy": {
       "actions": {
         "payload": "Sao chép Payload",
         "payLink": "Sao chép liên kết thanh toán",
@@ -197,7 +197,6 @@
     "qrAlt": "Mã VietQR cho giao dịch này",
     "account": "Số tài khoản",
     "amount": "Số tiền",
-    "amountValue": "{amount} VND",
     "description": "Nội dung",
     "verify": {
       "title": "Kiểm tra trước khi thanh toán",

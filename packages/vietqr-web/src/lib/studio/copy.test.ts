@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildEmbedUrl, buildPayLink } from "./share";
+import { buildEmbedUrl, buildPayLink } from "./copy";
 import { defaultParams, parseParams } from "./params";
 
 describe("buildPayLink", () => {

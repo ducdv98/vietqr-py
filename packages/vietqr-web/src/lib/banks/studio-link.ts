@@ -1,3 +1,4 @@
+import type { Bank } from "@/lib/banks/queries";
 import { PARAM_KEYS } from "@/lib/studio/params";
 
 /**
@@ -7,7 +8,7 @@ import { PARAM_KEYS } from "@/lib/studio/params";
  */
 export const STUDIO_BANK_PARAM = PARAM_KEYS.bank;
 
-export function studioHref(bank: { code: string; bin: string }): string {
+export function studioHref(bank: Pick<Bank, "code" | "bin">): string {
   const params = new URLSearchParams({
     [STUDIO_BANK_PARAM]: bank.code || bank.bin,
   });

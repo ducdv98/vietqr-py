@@ -6,7 +6,7 @@ import { ApiErrorAlert } from "@/components/api-error";
 import { buttonVariants } from "@/components/ui/button";
 import type { StudioParams } from "@/lib/studio/params";
 import type { StudioPayload } from "@/lib/studio/queries";
-import { ShareActions } from "./share-actions";
+import { CopyActions } from "./copy-actions";
 import { toQuery } from "@/lib/studio/validate";
 
 export type StudioPreviewProps = {
@@ -61,7 +61,7 @@ export function StudioPreview({
               {t("download")}
             </a>
           </div>
-          <ShareActions payload={payload} params={params} />
+          <CopyActions payload={payload} params={params} />
           <div>
             <h3 className="text-sm font-medium">{t("payload")}</h3>
             <code

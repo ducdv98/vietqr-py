@@ -1,20 +1,13 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ApiErrorAlert } from "@/components/api-error";
 import { BankLogo } from "@/components/banks/bank-logo";
+import { formatVnd } from "@/lib/format/amount";
 import { useBanks } from "@/lib/banks/queries";
 import { resolvePay } from "@/lib/pay/resolve";
-import type { StudioParams } from "@/lib/studio/params";
+import { FORM_FIELD_KEYS, type StudioParams } from "@/lib/studio/params";
 import { useStudioPayload } from "@/lib/studio/queries";
-import type { FieldErrors } from "@/lib/studio/validate";
-
-const FIELD_KEYS = [
-  "bank",
-  "account",
-  "amount",
-  "description",
-] as const satisfies readonly (keyof FieldErrors)[];
 
 function ProblemAlert({
   title,
@@ -37,6 +30,7 @@ function ProblemAlert({
 /** Payer-facing view of a Pay link: QR, bank, account number and amount, plus a verify notice. */
 export function PayView({ params }: { params: StudioParams }) {
   const t = useTranslations("Pay");
+  const locale = useLocale();
   const tStudio = useTranslations("Studio");
   const banks = useBanks();
   const resolved = banks.data ? resolvePay(params, banks.data) : null;
@@ -61,7 +55,7 @@ export function PayView({ params }: { params: StudioParams }) {
       <ProblemAlert title={t("errors.invalidTitle")}>
         <p className="text-sm">{t("errors.invalid")}</p>
         <ul className="list-disc pl-5 text-sm">
-          {FIELD_KEYS.flatMap((k) => {
+          {FORM_FIELD_KEYS.flatMap((k) => {
             const e = resolved.errors[k];
             return e
               ? [
@@ -80,7 +74,7 @@ export function PayView({ params }: { params: StudioParams }) {
     );
 
   const { bank, request: req } = resolved;
-  const amount = new Intl.NumberFormat("vi-VN").format(Number(req.amount));
+  const amount = formatVnd(req.amount ?? "0", locale);
   return (
     <article className="mx-auto max-w-md space-y-5" aria-labelledby="pay-title">
       <h1 id="pay-title" className="text-2xl font-semibold">
@@ -122,9 +116,7 @@ export function PayView({ params }: { params: StudioParams }) {
         </div>
         <div>
           <dt className="text-sm text-muted-foreground">{t("amount")}</dt>
-          <dd className="text-2xl font-semibold">
-            {t("amountValue", { amount })}
-          </dd>
+          <dd className="text-2xl font-semibold">{amount}</dd>
         </div>
         {req.description ? (
           <div>

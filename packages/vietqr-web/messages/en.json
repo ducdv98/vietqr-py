@@ -66,7 +66,7 @@
       "payload": "Payload",
       "download": "Download PNG"
     },
-    "share": {
+    "copy": {
       "actions": {
         "payload": "Copy Payload",
         "payLink": "Copy Pay link",
@@ -197,7 +197,6 @@
     "qrAlt": "VietQR code for this payment",
     "account": "Account number",
     "amount": "Amount",
-    "amountValue": "{amount} VND",
     "description": "Description",
     "verify": {
       "title": "Check before you pay",

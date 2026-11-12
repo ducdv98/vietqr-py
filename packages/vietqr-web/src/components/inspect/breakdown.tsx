@@ -3,6 +3,8 @@
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { BankLogo } from "@/components/banks/bank-logo";
+import { useConfig } from "@/lib/config";
+import { formatVnd } from "@/lib/format/amount";
 import { createSimilarHref } from "@/lib/inspect/similar-qr";
 import type { InspectResult } from "@/lib/inspect/queries";
 
@@ -10,13 +12,8 @@ export function Breakdown({ info }: { info: InspectResult }) {
   const t = useTranslations("Inspect");
   const locale = useLocale();
   const bank = info.bankInfo;
-  const amount = info.amount
-    ? new Intl.NumberFormat(locale, {
-        style: "currency",
-        currency: "VND",
-        maximumFractionDigits: 2,
-      }).format(Number(info.amount))
-    : null;
+  const { defaultTemplate } = useConfig();
+  const amount = info.amount ? formatVnd(info.amount, locale) : null;
   const tags = Object.entries(info.rawTags).sort(([a], [b]) =>
     a.localeCompare(b),
   );
@@ -76,7 +73,7 @@ export function Breakdown({ info }: { info: InspectResult }) {
       </dl>
 
       <Link
-        href={createSimilarHref(info)}
+        href={createSimilarHref(info, defaultTemplate)}
         className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
       >
         {t("similar")}

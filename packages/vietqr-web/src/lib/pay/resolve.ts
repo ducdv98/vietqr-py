@@ -1,11 +1,13 @@
+import type { Bank } from "@/lib/banks/queries";
 import type { StudioParams } from "@/lib/studio/params";
+import { findBank } from "@/lib/banks/find";
 import {
   validateStudio,
   type FieldErrors,
   type GenerateBody,
 } from "@/lib/studio/validate";
 
-type CatalogBank = { bin: string; code: string; shortName: string };
+type CatalogBank = Pick<Bank, "bin" | "code" | "shortName">;
 
 export type PayResolution<B extends CatalogBank = CatalogBank> =
   | { status: "missing" }
@@ -22,8 +24,7 @@ export function resolvePay<B extends CatalogBank>(
 ): PayResolution<B> {
   if (!params.bank.trim() && !params.account.trim() && !params.amount.trim())
     return { status: "missing" };
-  const v = params.bank.trim().toLowerCase();
-  const bank = banks.find((b) => b.bin === v || b.code.toLowerCase() === v);
+  const bank = findBank(banks, params.bank);
   const result = validateStudio(
     { ...params, template: "qr_only" },
     bank?.bin ?? null,

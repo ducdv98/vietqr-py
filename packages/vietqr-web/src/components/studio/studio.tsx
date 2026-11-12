@@ -4,8 +4,10 @@ import { useTranslations } from "next-intl";
 import { useId, useMemo, useState } from "react";
 import { ApiErrorAlert } from "@/components/api-error";
 import { BankPicker } from "@/components/banks/bank-picker";
+import { findBank } from "@/lib/banks/find";
 import { useBanks } from "@/lib/banks/queries";
 import {
+  FORM_FIELD_KEYS,
   SERVICE_TYPES,
   TEMPLATES,
   type StudioParams,
@@ -81,13 +83,8 @@ export function Studio({ initial }: { initial: StudioParams }) {
     setParams((p) => ({ ...p, [k]: v }));
   const touch = (k: FieldKey) => setTouched((s) => new Set(s).add(k));
 
-  const binFor = (p: StudioParams) => {
-    const v = p.bank.trim().toLowerCase();
-    return (
-      banks.data?.find((b) => b.bin === v || b.code.toLowerCase() === v)?.bin ??
-      null
-    );
-  };
+  const binFor = (p: StudioParams) =>
+    findBank(banks.data ?? [], p.bank)?.bin ?? null;
 
   // Field errors are shown for touched fields; the catalog must be loaded to judge the bank.
   const live = validateStudio(params, binFor(params));
@@ -108,8 +105,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
   );
   const request = debouncedValidation.ok ? debouncedValidation.request : null;
   const preview = useStudioPayload(request);
-  const showAll = () =>
-    setTouched(new Set(["bank", "account", "amount", "description", "size"]));
+  const showAll = () => setTouched(new Set<FieldKey>(FORM_FIELD_KEYS));
 
   return (
     <div className="space-y-6">

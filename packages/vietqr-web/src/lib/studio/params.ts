@@ -1,6 +1,6 @@
 /**
  * The ONE place that defines Studio's form fields and their query-string names.
- * Studio prefills from it; the Pay link (share) and Pay page build and read the same
+ * Studio prefills from it; the Pay link and Pay page build and read the same
  * contract. Values are raw strings as typed; validation lives in ./validate.
  */
 
@@ -37,6 +37,15 @@ export const PARAM_KEYS = {
   size: "size",
   accountName: "name",
 } as const satisfies Record<keyof StudioParams, string>;
+
+/** Form fields that can carry a validation error (Studio touches them; Pay lists them). */
+export const FORM_FIELD_KEYS = [
+  "bank",
+  "account",
+  "amount",
+  "description",
+  "size",
+] as const satisfies readonly (keyof StudioParams)[];
 
 export const DEFAULT_TEMPLATE: Template = "compact";
 
