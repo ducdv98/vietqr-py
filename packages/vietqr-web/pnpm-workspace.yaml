@@ -1,0 +1,7 @@
+# pnpm 12 requires an explicit decision for dependency build scripts.
+# esbuild/@swc/core/@parcel/watcher ship prebuilt binaries via optional dependencies; their
+# postinstall scripts are not needed, so they stay disabled (also keeps CI/Docker installs quiet).
+allowBuilds:
+  "@parcel/watcher": false
+  "@swc/core": false
+  esbuild: false

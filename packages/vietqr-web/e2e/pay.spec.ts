@@ -43,6 +43,28 @@ test.describe("pay enabled", () => {
     expect(results.violations).toEqual([]);
   });
 
+  test("a Pay link copied from Studio opens /pay and shows the QR", async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.goto(
+      "/?bank=VCB&account=0123456789&amount=50000&description=Lunch",
+    );
+    await page.getByRole("button", { name: "Copy Pay link" }).click();
+    await expect(page.getByText("Pay link copied.")).toBeVisible();
+    const link = await page.evaluate(() => navigator.clipboard.readText());
+    expect(new URL(link).pathname).toBe("/pay");
+
+    const res = await page.goto(link);
+    expect(res?.status()).toBe(200);
+    await expect(page.getByTestId("pay-bank")).toHaveText(/Vietcombank/);
+    await expect(page.getByText("0123456789")).toBeVisible();
+    await expect(
+      page.getByRole("img", { name: "VietQR code for this payment" }),
+    ).toHaveAttribute("src", /^data:image\/png/);
+  });
+
   test("sends no-referrer and noindex in headers and meta", async ({
     page,
   }) => {

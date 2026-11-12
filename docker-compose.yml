@@ -1,0 +1,47 @@
+# Full app: vietqr-api (private network only) + vietqr-web (published).
+#   cp .env.example .env   # optional; every variable has a default
+#   docker compose up --build
+services:
+  api:
+    build: .
+    environment:
+      VIETQR_MAX_UPLOAD_BYTES: ${VIETQR_MAX_UPLOAD_BYTES:-8388608}
+    networks: [private]
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request as u; u.urlopen('http://127.0.0.1:8080/health', timeout=3)"
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  web:
+    build:
+      context: packages/vietqr-web
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      VIETQR_API_URL: http://api:8080
+      VIETQR_MAX_UPLOAD_BYTES: ${VIETQR_MAX_UPLOAD_BYTES:-8388608}
+      VIETQR_APP_NAME: ${VIETQR_APP_NAME:-VietQR}
+      VIETQR_APP_LOGO: ${VIETQR_APP_LOGO:-}
+      VIETQR_LOCALES: ${VIETQR_LOCALES:-vi,en}
+      VIETQR_DEFAULT_LOCALE: ${VIETQR_DEFAULT_LOCALE:-vi}
+      VIETQR_DEFAULT_TEMPLATE: ${VIETQR_DEFAULT_TEMPLATE:-compact}
+      VIETQR_ENABLED_PAGES: ${VIETQR_ENABLED_PAGES:-studio,inspect,banks}
+      VIETQR_FOOTER_LINKS: ${VIETQR_FOOTER_LINKS:-}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    networks: [private, public]
+    restart: unless-stopped
+
+networks:
+  # internal: the API has no route to or from the outside; only web is published.
+  private:
+    internal: true
+  public: {}
