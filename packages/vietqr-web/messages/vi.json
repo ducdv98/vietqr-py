@@ -66,5 +66,71 @@
       "loading": "Đang tải danh sách ngân hàng…",
       "clear": "Bỏ chọn ngân hàng"
     }
+  },
+  "Inspect": {
+    "title": "Kiểm tra mã QR",
+    "intro": "Dán chuỗi payload hoặc tải ảnh QR lên để xem nội dung.",
+    "payload": {
+      "label": "Payload",
+      "hint": "Chuỗi văn bản mã VietQR mã hóa, kết thúc bằng 4 ký tự kiểm tra.",
+      "submit": "Đọc payload",
+      "placeholder": "00020101021238..."
+    },
+    "image": {
+      "label": "Ảnh QR",
+      "drop": "Thả ảnh QR vào đây, hoặc chọn tệp",
+      "choose": "Chọn ảnh",
+      "hint": "PNG, JPEG, WebP, BMP hoặc GIF, tối đa {limit}.",
+      "reading": "Đang đọc ảnh…"
+    },
+    "upload": {
+      "tooLarge": "Tệp quá lớn. Giới hạn là {limit}.",
+      "notImage": "Tệp này không phải ảnh.",
+      "empty": "Tệp này rỗng."
+    },
+    "result": {
+      "title": "Kết quả",
+      "reading": "Đang đọc…",
+      "source": {
+        "payload": "Từ payload đã dán",
+        "image": "Từ ảnh đã tải lên"
+      }
+    },
+    "crc": {
+      "valid": "Mã kiểm tra hợp lệ",
+      "invalid": "Mã kiểm tra không hợp lệ",
+      "invalidDetail": "Mã kiểm tra của payload không khớp. Mã có thể bị hỏng hoặc bị sửa, và ứng dụng ngân hàng có thể từ chối."
+    },
+    "fields": {
+      "bank": "Ngân hàng",
+      "unknownBank": "Ngân hàng không có trong danh mục (BIN {bin})",
+      "account": "Số tài khoản",
+      "amount": "Số tiền",
+      "noAmount": "Không đặt (người trả tự nhập)",
+      "description": "Nội dung",
+      "noDescription": "Không có",
+      "qrType": "Loại QR",
+      "serviceType": "Loại dịch vụ",
+      "crc": "Mã kiểm tra"
+    },
+    "qrType": {
+      "static": "Tĩnh",
+      "dynamic": "Động"
+    },
+    "serviceType": {
+      "account": "Tài khoản ngân hàng",
+      "card": "Thẻ ngân hàng"
+    },
+    "rawTags": {
+      "title": "Các tag thô",
+      "tag": "Tag",
+      "value": "Giá trị",
+      "payload": "Toàn bộ payload"
+    },
+    "similar": "Tạo QR tương tự",
+    "errors": {
+      "notVietQr": "Đây không phải mã VietQR hợp lệ. Hãy kiểm tra payload, kể cả mã kiểm tra.",
+      "decodeFailed": "Không đọc được mã QR từ ảnh này."
+    }
   }
 }

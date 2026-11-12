@@ -66,5 +66,71 @@
       "loading": "Loading banks…",
       "clear": "Clear bank"
     }
+  },
+  "Inspect": {
+    "title": "Inspect a QR",
+    "intro": "Paste a payload or upload a QR image to see what it says.",
+    "payload": {
+      "label": "Payload",
+      "hint": "The text a VietQR code encodes, ending in a 4-character checksum.",
+      "submit": "Read payload",
+      "placeholder": "00020101021238..."
+    },
+    "image": {
+      "label": "QR image",
+      "drop": "Drop a QR image here, or choose a file",
+      "choose": "Choose image",
+      "hint": "PNG, JPEG, WebP, BMP or GIF, up to {limit}.",
+      "reading": "Reading image…"
+    },
+    "upload": {
+      "tooLarge": "That file is too large. The limit is {limit}.",
+      "notImage": "That file is not an image.",
+      "empty": "That file is empty."
+    },
+    "result": {
+      "title": "Result",
+      "reading": "Reading…",
+      "source": {
+        "payload": "From pasted payload",
+        "image": "From uploaded image"
+      }
+    },
+    "crc": {
+      "valid": "Checksum valid",
+      "invalid": "Checksum invalid",
+      "invalidDetail": "This payload's checksum does not match. The code may be damaged or edited, and a banking app may refuse it."
+    },
+    "fields": {
+      "bank": "Bank",
+      "unknownBank": "Bank not in catalog (BIN {bin})",
+      "account": "Account number",
+      "amount": "Amount",
+      "noAmount": "Not set (the payer enters it)",
+      "description": "Description",
+      "noDescription": "None",
+      "qrType": "QR type",
+      "serviceType": "Service type",
+      "crc": "Checksum"
+    },
+    "qrType": {
+      "static": "Static",
+      "dynamic": "Dynamic"
+    },
+    "serviceType": {
+      "account": "Bank account",
+      "card": "Bank card"
+    },
+    "rawTags": {
+      "title": "Raw tags",
+      "tag": "Tag",
+      "value": "Value",
+      "payload": "Full payload"
+    },
+    "similar": "Create similar QR",
+    "errors": {
+      "notVietQr": "This is not a valid VietQR code. Check the payload, including its checksum.",
+      "decodeFailed": "Could not read a QR code from this image."
+    }
   }
 }

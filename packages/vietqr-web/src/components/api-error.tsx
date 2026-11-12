@@ -23,9 +23,12 @@ export function useApiErrorMessage(): (error: unknown) => string {
 export function ApiErrorAlert({
   error,
   className,
+  message: override,
 }: {
   error: unknown;
   className?: string;
+  /** Page-specific headline replacing the generic one for this error code. */
+  message?: string;
 }) {
   const t = useTranslations("Errors");
   const message = useApiErrorMessage();
@@ -38,7 +41,7 @@ export function ApiErrorAlert({
         "rounded-md border border-red-500/50 bg-red-500/10 p-3 text-sm"
       }
     >
-      <p className="font-medium">{message(e)}</p>
+      <p className="font-medium">{override ?? message(e)}</p>
       <details className="mt-2">
         <summary className="cursor-pointer text-xs">
           {t("technicalDetail")}
