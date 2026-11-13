@@ -30,7 +30,7 @@ export function ThemeToggle() {
           localStorage.setItem("theme", next ? "dark" : "light");
         } catch {}
       }}
-      className="inline-flex size-9 items-center justify-center rounded-lg border border-input bg-card transition-colors hover:bg-muted"
+      className="inline-flex size-8 items-center justify-center rounded-md border border-input bg-card transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       {dark ? (
         <Sun aria-hidden className="size-4" />

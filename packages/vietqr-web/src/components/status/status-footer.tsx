@@ -14,12 +14,15 @@ export function StatusFooter() {
   const outdated = version !== null && isOlder(version, GENERATED_API_VERSION);
 
   let Icon = LoaderCircle;
+  let tone = "text-subtle-foreground";
   let text = t("checking");
   if (isError) {
     Icon = CircleX;
+    tone = "text-destructive";
     text = t("down");
   } else if (!isPending) {
     Icon = CircleCheck;
+    tone = "text-primary";
     text = version ? t("up", { version }) : t("upNoVersion");
   }
 
@@ -27,18 +30,21 @@ export function StatusFooter() {
     <div
       role="group"
       aria-label={t("label")}
-      className="flex flex-wrap items-center gap-x-4 gap-y-1"
+      className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs"
     >
-      <span role="status" className="inline-flex items-center gap-1.5">
-        <Icon aria-hidden className="size-4" />
+      <span
+        role="status"
+        className="inline-flex h-6 items-center gap-1.5 rounded-full border border-border bg-card px-2.5"
+      >
+        <Icon aria-hidden className={`size-3.5 ${tone}`} />
         {text}
       </span>
       {outdated ? (
         <span
           role="alert"
-          className="inline-flex items-center gap-1.5 font-medium"
+          className="inline-flex items-center gap-1.5 font-medium text-warning-foreground"
         >
-          <CircleAlert aria-hidden className="size-4" />
+          <CircleAlert aria-hidden className="size-3.5" />
           {t("outdated", {
             apiVersion: version,
             expected: GENERATED_API_VERSION,

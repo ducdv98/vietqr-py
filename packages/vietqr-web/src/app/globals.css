@@ -3,90 +3,102 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* VietQR Ledger tokens: paper / surface / sunken, ink ladder, one jade accent. */
 :root {
   color-scheme: light;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --primary: oklch(0.45 0.17 255);
-  --primary-foreground: oklch(0.985 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --muted: oklch(0.965 0.005 255);
-  --muted-foreground: oklch(0.45 0.01 255);
-  --accent: oklch(0.955 0.02 255);
-  --border: oklch(0.91 0.01 255);
-  --input: oklch(0.91 0.01 255);
-  --ring: oklch(0.55 0.17 255);
-  --warning: oklch(0.95 0.08 85);
-  --warning-foreground: oklch(0.4 0.09 70);
-  --radius: 0.75rem;
+  --background: #f6f5f0; /* paper */
+  --foreground: #151714; /* ink */
+  --card: #ffffff; /* surface */
+  --card-foreground: #151714;
+  --muted: #ecebe3; /* sunken */
+  --muted-foreground: #565a50; /* ink-muted */
+  --subtle-foreground: #5f6358; /* ink-subtle: not on --muted in light */
+  --accent: #ecebe3; /* hover wash; selected state uses --selected */
+  --border: #e0ddd2; /* line */
+  --input: #8a8e80; /* line-control, 3:1 on paper and surface */
+  --primary: #0a6b58; /* jade */
+  --primary-strong: #064f41; /* jade-strong */
+  --primary-foreground: #ffffff; /* on-jade */
+  --selected: #dff0ea; /* jade-tint */
+  --ring: #0a6b58; /* focus */
+  --destructive: #b3261e;
+  --destructive-tint: #fceae7;
+  --warning: #fcf0d2;
+  --warning-foreground: #8a5300;
+  --info: #1d5bbf;
+  --info-tint: #e5eefb;
+  --qr-ground: #ffffff;
+  --qr-ink: #000000;
+  --shadow-pop-value: 0 8px 24px rgb(21 23 20 / 0.12);
+  --shadow-lift-value: 0 14px 32px -10px rgb(21 23 20 / 0.22);
+  --radius: 0.5rem;
 }
 
 .dark {
   color-scheme: dark;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --primary: oklch(0.72 0.14 255);
-  --primary-foreground: oklch(0.145 0.02 255);
-  --card: oklch(0.19 0.01 255);
-  --card-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.24 0.01 255);
-  --muted-foreground: oklch(0.72 0.01 255);
-  --accent: oklch(0.27 0.03 255);
-  --border: oklch(1 0 0 / 14%);
-  --input: oklch(1 0 0 / 20%);
-  --ring: oklch(0.72 0.14 255);
-  --warning: oklch(0.3 0.06 80);
-  --warning-foreground: oklch(0.88 0.1 85);
+  --background: #0e100e;
+  --foreground: #eeefe8;
+  --card: #161916;
+  --card-foreground: #eeefe8;
+  --muted: #0a0b0a;
+  --muted-foreground: #a9ada0;
+  --subtle-foreground: #9a9e92;
+  --accent: #1f231f;
+  --border: #272b26;
+  --input: #6e7367;
+  --primary: #4fd3b2;
+  --primary-strong: #7be3c8;
+  --primary-foreground: #04211a;
+  --selected: #12312a;
+  --ring: #4fd3b2;
+  --destructive: #ff9a8c;
+  --destructive-tint: #3b1915;
+  --warning: #33260a;
+  --warning-foreground: #f3ba52;
+  --info: #8db4ff;
+  --info-tint: #14233f;
+  --shadow-pop-value: 0 8px 24px rgb(0 0 0 / 0.6);
+  --shadow-lift-value: 0 14px 32px -10px rgb(0 0 0 / 0.7);
 }
 
 @theme inline {
+  --font-sans:
+    var(--font-be-vietnam), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:
+    var(--font-jetbrains), ui-monospace, "Cascadia Mono", Consolas, monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
   --color-primary-foreground: var(--primary-foreground);
+  --color-selected: var(--selected);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --color-subtle-foreground: var(--subtle-foreground);
   --color-accent: var(--accent);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-tint: var(--destructive-tint);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-tint: var(--info-tint);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --shadow-pop: var(--shadow-pop-value);
+  --shadow-lift: var(--shadow-lift-value);
 }
 
 body {
-  background:
-    radial-gradient(
-      60rem 30rem at 0% -10%,
-      oklch(0.95 0.04 20 / 60%),
-      transparent 60%
-    ),
-    radial-gradient(
-      60rem 30rem at 100% -10%,
-      oklch(0.94 0.04 255 / 70%),
-      transparent 60%
-    ),
-    oklch(0.985 0.004 255);
-  background-attachment: fixed;
-  color: var(--foreground);
-}
-
-.dark body {
   background: var(--background);
-}
-
-/* Brand gradient shared by the hero banner and primary buttons. */
-.bg-brand {
-  background-image: linear-gradient(
-    135deg,
-    oklch(0.62 0.2 258),
-    oklch(0.4 0.18 262)
-  );
+  color: var(--foreground);
 }

@@ -1,9 +1,12 @@
 "use client";
 
+import { Check, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { BankLogo } from "@/components/banks/bank-logo";
+import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { useConfig } from "@/lib/config";
 import { formatVnd } from "@/lib/format/amount";
 import { createSimilarHref } from "@/lib/inspect/similar-qr";
@@ -22,20 +25,17 @@ export function Breakdown({ info }: { info: InspectResult }) {
   return (
     <div className="space-y-4">
       <p>
-        <Badge
-          variant={info.isValidCrc ? "default" : "warning"}
-          className="px-3 py-1 text-sm"
-        >
+        <Badge variant={info.isValidCrc ? "default" : "destructive"}>
+          {info.isValidCrc ? (
+            <Check aria-hidden className="size-3" />
+          ) : (
+            <X aria-hidden className="size-3" />
+          )}
           {info.isValidCrc ? t("crc.valid") : t("crc.invalid")}
         </Badge>
       </p>
       {info.isValidCrc ? null : (
-        <p
-          role="alert"
-          className="rounded-md border border-red-500/50 bg-red-500/10 p-3 text-sm"
-        >
-          {t("crc.invalidDetail")}
-        </p>
+        <Alert tone="danger">{t("crc.invalidDetail")}</Alert>
       )}
 
       <dl className="grid grid-cols-[max-content_1fr] items-center gap-x-6 gap-y-2 text-sm">
@@ -51,7 +51,7 @@ export function Breakdown({ info }: { info: InspectResult }) {
           )}
         </dd>
         <dt className="text-muted-foreground">{t("fields.account")}</dt>
-        <dd className="font-mono">{info.accountNo}</dd>
+        <dd className="font-mono tabular-nums">{info.accountNo}</dd>
         <dt className="text-muted-foreground">{t("fields.amount")}</dt>
         <dd>{amount ?? t("fields.noAmount")}</dd>
         <dt className="text-muted-foreground">{t("fields.description")}</dt>
@@ -74,23 +74,29 @@ export function Breakdown({ info }: { info: InspectResult }) {
 
       <Link
         href={createSimilarHref(info, defaultTemplate)}
-        className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        className={buttonVariants({ variant: "outline" })}
       >
         {t("similar")}
       </Link>
 
       <section aria-labelledby="raw-tags" className="space-y-2">
-        <h3 id="raw-tags" className="font-medium">
+        <h3 id="raw-tags" className="text-lg font-semibold tracking-tight">
           {t("rawTags.title")}
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
               <tr>
-                <th scope="col" className="pr-4 font-medium">
+                <th
+                  scope="col"
+                  className="pr-4 pb-1 text-[0.6875rem] font-semibold tracking-[0.08em] text-muted-foreground uppercase"
+                >
                   {t("rawTags.tag")}
                 </th>
-                <th scope="col" className="font-medium">
+                <th
+                  scope="col"
+                  className="pb-1 text-[0.6875rem] font-semibold tracking-[0.08em] text-muted-foreground uppercase"
+                >
                   {t("rawTags.value")}
                 </th>
               </tr>
@@ -98,8 +104,10 @@ export function Breakdown({ info }: { info: InspectResult }) {
             <tbody>
               {tags.map(([tag, value]) => (
                 <tr key={tag} className="border-t border-border">
-                  <td className="pr-4 py-1 font-mono">{tag}</td>
-                  <td className="py-1 font-mono break-all">{value}</td>
+                  <td className="py-1.5 pr-4 font-mono font-medium text-primary">
+                    {tag}
+                  </td>
+                  <td className="py-1.5 font-mono break-all">{value}</td>
                 </tr>
               ))}
             </tbody>
@@ -109,7 +117,7 @@ export function Breakdown({ info }: { info: InspectResult }) {
           <summary className="cursor-pointer text-sm">
             {t("rawTags.payload")}
           </summary>
-          <code className="mt-1 block font-mono text-xs break-all">
+          <code className="mt-2 block rounded-md border border-border bg-muted p-3 font-mono text-[0.8125rem] leading-5 break-all">
             {info.rawPayload}
           </code>
         </details>

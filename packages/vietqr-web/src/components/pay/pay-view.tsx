@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { ApiErrorAlert } from "@/components/api-error";
 import { BankLogo } from "@/components/banks/bank-logo";
+import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatVnd } from "@/lib/format/amount";
@@ -19,13 +20,10 @@ function ProblemAlert({
   children?: React.ReactNode;
 }) {
   return (
-    <div
-      role="alert"
-      className="space-y-2 rounded-xl border border-red-500/50 bg-red-500/10 p-4"
-    >
-      <p className="font-medium">{title}</p>
+    <Alert tone="danger" className="space-y-2">
+      <p className="font-semibold text-destructive">{title}</p>
       {children}
-    </div>
+    </Alert>
   );
 }
 
@@ -81,14 +79,14 @@ export function PayView({ params }: { params: StudioParams }) {
   const { bank, request: req } = resolved;
   const amount = req.amount ? formatVnd(req.amount, locale) : null;
   return (
-    <Card className="mx-auto max-w-md p-5">
+    <Card className="mx-auto max-w-md rounded-2xl p-5 shadow-lift">
       <article className="space-y-5" aria-labelledby="pay-title">
-        <h1 id="pay-title" className="text-2xl font-semibold">
+        <h1 id="pay-title" className="text-3xl font-semibold tracking-tight">
           {t("title")}
         </h1>
         <div
           role="note"
-          className="rounded-lg bg-warning p-3 text-sm text-warning-foreground"
+          className="rounded-lg bg-warning px-4 py-3 text-sm text-warning-foreground"
         >
           <p className="font-medium">{t("verify.title")}</p>
           <p>{t("verify.body")}</p>
@@ -99,7 +97,7 @@ export function PayView({ params }: { params: StudioParams }) {
           <img
             src={qr.data.qrDataURL}
             alt={t("qrAlt")}
-            className="mx-auto w-full max-w-xs rounded-md border border-input bg-white"
+            className="mx-auto w-full max-w-xs rounded-lg border border-border bg-[var(--qr-ground)]"
           />
         ) : null}
         {!qr.error && !qr.data ? (
@@ -115,22 +113,26 @@ export function PayView({ params }: { params: StudioParams }) {
         </div>
         <dl className="space-y-3">
           <div>
-            <dt className="text-sm text-muted-foreground">{t("account")}</dt>
-            <dd className="font-mono text-2xl font-semibold break-all">
-              {req.accountNo}
-            </dd>
+            <dt className="text-[0.8125rem] text-muted-foreground">
+              {t("account")}
+            </dt>
+            <dd className="font-mono text-lg break-all">{req.accountNo}</dd>
           </div>
           <div>
-            <dt className="text-sm text-muted-foreground">{t("amount")}</dt>
+            <dt className="text-[0.8125rem] text-muted-foreground">
+              {t("amount")}
+            </dt>
             {amount ? (
-              <dd className="text-2xl font-semibold">{amount}</dd>
+              <dd className="text-4xl font-medium tracking-tight tabular-nums">
+                {amount}
+              </dd>
             ) : (
               <dd data-testid="pay-no-amount">{t("noAmount")}</dd>
             )}
           </div>
           {req.description ? (
             <div>
-              <dt className="text-sm text-muted-foreground">
+              <dt className="text-[0.8125rem] text-muted-foreground">
                 {t("description")}
               </dt>
               <dd className="break-words">{req.description}</dd>

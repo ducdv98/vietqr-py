@@ -16,7 +16,7 @@ export function Tooltip({
       {children}
       <span
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 rounded-md bg-foreground px-2 py-1 text-xs whitespace-nowrap text-background opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
+        className="pointer-events-none absolute bottom-full left-1/2 z-40 mb-1 -translate-x-1/2 rounded-sm bg-foreground px-2 py-1 text-xs font-medium whitespace-nowrap shadow-pop text-background opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
       >
         {text}
       </span>

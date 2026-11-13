@@ -116,7 +116,7 @@ export function BankPicker({
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-2 rounded-md border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring">
+      <div className="flex items-center gap-2 rounded-md border border-input bg-card px-3 hover:border-muted-foreground focus-within:border-ring focus-within:outline-2 focus-within:outline-ring">
         {selected && query === null ? (
           <BankLogo
             logo={selected.logo}
@@ -151,7 +151,7 @@ export function BankPicker({
           onClick={() => setOpen(true)}
           onBlur={close}
           onKeyDown={onKeyDown}
-          className="h-10 min-w-0 flex-1 bg-transparent text-sm outline-none"
+          className="h-10 min-w-0 flex-1 bg-transparent text-[0.9375rem] outline-none"
         />
         {selected && !disabled ? (
           <button
@@ -175,7 +175,7 @@ export function BankPicker({
         role="listbox"
         aria-label={ariaLabel ?? t("listLabel")}
         hidden={!open}
-        className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-md border border-border bg-background py-1 shadow-md"
+        className="absolute z-40 mt-1 max-h-72 w-full overflow-auto rounded-lg border border-border bg-card p-1 shadow-pop"
       >
         {open && results.length === 0 ? (
           <li
@@ -196,8 +196,12 @@ export function BankPicker({
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => choose(b)}
                 onMouseMove={() => setActive(i)}
-                className={`flex cursor-pointer items-center gap-3 px-3 py-2 text-sm ${
-                  i === activeIndex ? "bg-accent" : ""
+                className={`flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm ${
+                  b.bin === selected?.bin
+                    ? "bg-selected text-primary-strong"
+                    : i === activeIndex
+                      ? "bg-accent"
+                      : ""
                 }`}
               >
                 <BankLogo logo={b.logo} code={b.code} className="size-8" />

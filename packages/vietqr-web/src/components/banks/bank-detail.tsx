@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { ApiErrorAlert } from "@/components/api-error";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBank } from "@/lib/banks/queries";
@@ -40,7 +41,9 @@ export function BankDetail({ binOrCode }: { binOrCode: string }) {
                   code={data.code}
                   className="size-16"
                 />
-                <h1 className="text-2xl font-semibold">{data.shortName}</h1>
+                <h1 className="text-3xl font-semibold tracking-tight">
+                  {data.shortName}
+                </h1>
               </div>
               <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-sm">
                 <dt className="text-muted-foreground">{t("fields.name")}</dt>
@@ -54,10 +57,7 @@ export function BankDetail({ binOrCode }: { binOrCode: string }) {
                 <dt className="text-muted-foreground">{t("fields.bin")}</dt>
                 <dd className="font-mono">{data.bin}</dd>
               </dl>
-              <Link
-                href={studioHref(data)}
-                className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              >
+              <Link href={studioHref(data)} className={buttonVariants()}>
                 {t("openInStudio")}
               </Link>
             </article>

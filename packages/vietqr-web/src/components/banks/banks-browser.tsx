@@ -21,7 +21,10 @@ export function BanksBrowser() {
   return (
     <div className="space-y-4">
       <Card className="space-y-1 p-4">
-        <label htmlFor="bank-search" className="text-sm font-medium">
+        <label
+          htmlFor="bank-search"
+          className="block text-[0.8125rem] leading-4 font-medium text-muted-foreground"
+        >
           {t("searchLabel")}
         </label>
         <input
@@ -31,9 +34,12 @@ export function BanksBrowser() {
           aria-describedby="bank-search-hint"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="h-10 w-full rounded-md border border-input bg-card px-3 text-[0.9375rem] hover:border-muted-foreground focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-ring"
         />
-        <p id="bank-search-hint" className="text-xs text-muted-foreground">
+        <p
+          id="bank-search-hint"
+          className="text-[0.8125rem] leading-5 text-subtle-foreground"
+        >
           {t("searchHint")}
         </p>
       </Card>
@@ -69,11 +75,11 @@ export function BanksBrowser() {
             {results.map((b) => (
               <li
                 key={b.bin}
-                className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 text-card-foreground shadow-sm transition-colors hover:border-primary/40"
+                className="flex items-start gap-3 rounded-lg border border-border bg-card p-4 text-card-foreground transition-colors hover:border-input"
               >
                 <BankLogo logo={b.logo} code={b.code} className="size-12" />
                 <div className="min-w-0 flex-1 space-y-1">
-                  <h2 className="font-medium">
+                  <h2 className="font-semibold">
                     <Link
                       href={`/banks/${encodeURIComponent(b.code || b.bin)}`}
                       className="hover:underline"
@@ -82,13 +88,13 @@ export function BanksBrowser() {
                     </Link>
                   </h2>
                   <p className="text-sm text-muted-foreground">{b.name}</p>
-                  <p className="font-mono text-xs">
+                  <p className="font-mono text-xs text-subtle-foreground">
                     {b.code} · {b.bin}
                   </p>
                   <Link
                     href={studioHref(b)}
                     aria-label={t("openInStudioFor", { name: b.shortName })}
-                    className="inline-block text-sm font-medium text-primary underline underline-offset-2"
+                    className="inline-block text-sm font-semibold text-primary underline underline-offset-4 hover:text-primary-strong"
                   >
                     {t("openInStudio")}
                   </Link>

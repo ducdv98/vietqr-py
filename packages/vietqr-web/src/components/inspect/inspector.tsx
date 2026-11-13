@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useId, useState, type DragEvent, type FormEvent } from "react";
 import { ApiErrorAlert } from "@/components/api-error";
+import { Alert } from "@/components/ui/alert";
+import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError } from "@/lib/api/unwrap";
@@ -77,12 +79,9 @@ export function Inspector() {
             placeholder={t("payload.placeholder")}
             rows={4}
             spellCheck={false}
-            className="w-full rounded-lg border border-input bg-background p-3 font-mono text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className="w-full rounded-md border border-input bg-card p-3 font-mono text-[0.8125rem] leading-5 hover:border-muted-foreground focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-ring"
           />
-          <button
-            type="submit"
-            className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-          >
+          <button type="submit" className={buttonVariants()}>
             {t("payload.submit")}
           </button>
         </form>
@@ -96,7 +95,7 @@ export function Inspector() {
         }}
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
-        className={`rounded-xl border-2 border-dashed border-border bg-card p-6 text-center transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring ${dragging ? "border-primary bg-primary/10" : ""}`}
+        className={`rounded-lg border border-dashed border-input bg-card p-6 text-center transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring ${dragging ? "border-primary bg-selected" : ""}`}
       >
         <label className="block cursor-pointer space-y-2">
           <span className="block font-medium">{t("image.label")}</span>
@@ -118,14 +117,7 @@ export function Inspector() {
       </div>
 
       <section aria-live="polite" aria-label={t("result.title")}>
-        {uploadError ? (
-          <p
-            role="alert"
-            className="rounded-md border border-red-500/50 bg-red-500/10 p-3 text-sm"
-          >
-            {uploadError}
-          </p>
-        ) : null}
+        {uploadError ? <Alert tone="danger">{uploadError}</Alert> : null}
         {inspect.isPending ? (
           <div className="space-y-2">
             <p role="status" className="text-sm text-muted-foreground">

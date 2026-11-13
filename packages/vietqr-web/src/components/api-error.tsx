@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Alert } from "@/components/ui/alert";
 import { ApiError } from "@/lib/api/unwrap";
 
 const asApiError = (e: unknown): ApiError =>
@@ -34,19 +35,13 @@ export function ApiErrorAlert({
   const message = useApiErrorMessage();
   const e = asApiError(error);
   return (
-    <div
-      role="alert"
-      className={
-        className ??
-        "rounded-md border border-red-500/50 bg-red-500/10 p-3 text-sm"
-      }
-    >
-      <p className="font-medium">{override ?? message(e)}</p>
+    <Alert tone="danger" className={className}>
+      <p className="font-semibold text-destructive">{override ?? message(e)}</p>
       <details className="mt-2">
-        <summary className="cursor-pointer text-xs">
+        <summary className="cursor-pointer text-[0.8125rem] text-muted-foreground">
           {t("technicalDetail")}
         </summary>
-        <dl className="mt-1 space-y-1 font-mono text-xs break-words">
+        <dl className="mt-1 space-y-1 font-mono text-xs break-words text-muted-foreground">
           <div>
             <dt className="inline">{t("code")}: </dt>
             <dd className="inline">{e.code}</dd>
@@ -63,6 +58,6 @@ export function ApiErrorAlert({
           )}
         </dl>
       </details>
-    </div>
+    </Alert>
   );
 }

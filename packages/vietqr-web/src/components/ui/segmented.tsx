@@ -28,14 +28,17 @@ export function Segmented<T extends string>({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className={cn("inline-flex rounded-xl bg-muted p-1", className)}
+      className={cn(
+        "inline-flex gap-0.5 rounded-md border border-border bg-muted p-[3px]",
+        className,
+      )}
     >
       {options.map((o) => (
         <label
           key={o.value}
           className={cn(
-            "cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
-            value === o.value && "bg-card text-primary shadow-sm",
+            "inline-flex h-8 cursor-pointer items-center rounded-[5px] border border-transparent px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring",
+            value === o.value && "border-input bg-card text-foreground",
           )}
         >
           <input

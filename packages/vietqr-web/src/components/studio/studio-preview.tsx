@@ -57,13 +57,16 @@ export function StudioPreview({
     >
       <h2
         id="studio-preview-title"
-        className="text-xs font-semibold tracking-widest text-muted-foreground uppercase"
+        className="text-[0.6875rem] leading-4 font-semibold tracking-[0.08em] text-muted-foreground uppercase"
       >
         {t("title")}
       </h2>
       {error ? <ApiErrorAlert error={error} /> : null}
       {!error && payload ? (
-        <Card aria-busy={pending ? "true" : "false"}>
+        <Card
+          aria-busy={pending ? "true" : "false"}
+          className="rounded-2xl shadow-lift"
+        >
           <CardContent className="space-y-4 p-5">
             {outdated ? <Badge variant="warning">{t("outdated")}</Badge> : null}
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -71,7 +74,7 @@ export function StudioPreview({
               src={payload.qrDataURL}
               alt={t("alt")}
               className={
-                "mx-auto max-h-[32rem] w-auto max-w-full rounded-xl border border-border bg-white shadow-sm" +
+                "mx-auto max-h-[32rem] w-auto max-w-full rounded-lg border border-border bg-[var(--qr-ground)]" +
                 (pending || outdated ? " opacity-60" : "")
               }
             />
@@ -102,7 +105,7 @@ export function StudioPreview({
             <p data-testid="qr-type">
               <span className="text-sm font-medium">{t("qrType")}: </span>
               {t(`qrTypes.${qrTypeOf(payload.request)}`)}
-              <span className="block text-xs text-muted-foreground">
+              <span className="block text-[0.8125rem] leading-5 text-subtle-foreground">
                 {t(`qrTypeNote.${qrTypeOf(payload.request)}`)}
               </span>
             </p>
@@ -113,14 +116,16 @@ export function StudioPreview({
               details={
                 <code
                   data-testid="payload"
-                  className="block rounded-xl bg-slate-950 p-3 font-mono text-xs break-all text-slate-100"
+                  className="block rounded-md border border-border bg-muted p-3 font-mono text-[0.8125rem] leading-5 break-all text-foreground"
                 >
                   {payload.qrCode}
                 </code>
               }
             />
             <p className="text-sm">{t("scanHint")}</p>
-            <p className="text-xs text-muted-foreground">{t("storedNote")}</p>
+            <p className="text-[0.8125rem] leading-5 text-subtle-foreground">
+              {t("storedNote")}
+            </p>
           </CardContent>
         </Card>
       ) : null}
@@ -132,7 +137,7 @@ export function StudioPreview({
           </div>
         ) : (
           <p
-            className="rounded-2xl border border-dashed border-border bg-card/60 p-10 text-center text-sm text-muted-foreground"
+            className="rounded-lg border border-dashed border-input bg-muted p-10 text-center text-sm text-muted-foreground"
             role="status"
           >
             {t("empty")}

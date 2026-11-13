@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { ToastProvider } from "@/components/ui/toast";
@@ -8,6 +9,19 @@ import { ConfigProvider } from "@/lib/config";
 import { QueryProvider } from "@/lib/query/provider";
 import { getConfig } from "@/lib/config/server";
 import "./globals.css";
+
+const sans = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600"],
+  variable: "--font-be-vietnam",
+  display: "swap",
+});
+const mono = JetBrains_Mono({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500"],
+  variable: "--font-jetbrains",
+  display: "swap",
+});
 
 // Config comes from runtime env, so never prerender it at build time.
 export const dynamic = "force-dynamic";
@@ -25,7 +39,11 @@ export default async function RootLayout({
   const config = getConfig();
   const locale = await getLocale();
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${sans.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>

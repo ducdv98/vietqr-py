@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { CircleAlert } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { ApiErrorAlert } from "@/components/api-error";
 import { BankPicker } from "@/components/banks/bank-picker";
@@ -13,6 +14,7 @@ import {
   type Template,
 } from "@/lib/studio/params";
 import { useStudioPayload } from "@/lib/studio/queries";
+import { Accordion } from "@/components/ui/accordion";
 import { Segmented } from "@/components/ui/segmented";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +27,9 @@ import {
 import { StudioPreview } from "./studio-preview";
 
 const inputClass =
-  "h-11 w-full rounded-xl border border-input bg-background px-3 text-sm transition-colors focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 aria-[invalid=true]:border-red-600";
+  "h-10 w-full rounded-md border border-input bg-card px-3 text-[0.9375rem] transition-colors hover:border-muted-foreground focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-ring aria-[invalid=true]:border-destructive";
+/** Account numbers and amounts are data: mono, tabular. */
+const dataInputClass = `${inputClass} font-mono text-sm tracking-[0.02em] tabular-nums`;
 
 type QrType = "static" | "dynamic";
 
@@ -58,8 +62,11 @@ function Field({
     [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(" ") ||
     undefined;
   return (
-    <div className="space-y-1">
-      <label htmlFor={id} className="text-sm font-medium text-muted-foreground">
+    <div className="space-y-1.5">
+      <label
+        htmlFor={id}
+        className="block text-[0.8125rem] leading-4 font-medium text-muted-foreground"
+      >
         {label}
       </label>
       {children({
@@ -68,16 +75,20 @@ function Field({
         "aria-invalid": !!error,
       })}
       {hint ? (
-        <p id={`${id}-hint`} className="text-xs text-muted-foreground">
+        <p
+          id={`${id}-hint`}
+          className="text-[0.8125rem] leading-5 text-subtle-foreground"
+        >
           {hint}
         </p>
       ) : null}
       {error ? (
         <p
           id={`${id}-error`}
-          className="text-xs text-red-700 dark:text-red-400"
+          className="flex items-start gap-1.5 text-[0.8125rem] leading-5 text-destructive"
         >
-          {error}
+          <CircleAlert aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+          <span>{error}</span>
         </p>
       ) : null}
     </div>
@@ -158,15 +169,15 @@ export function Studio({ initial }: { initial: StudioParams }) {
   }
 
   return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-muted-foreground">{t("intro")}</p>
+    <div className="space-y-8">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-semibold tracking-tight">{t("title")}</h1>
+        <p className="max-w-[56ch] text-muted-foreground">{t("intro")}</p>
       </header>
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22.5rem]">
         <form
           aria-label={t("formLabel")}
-          className="space-y-4 rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-sm"
+          className="space-y-5 rounded-lg border border-border bg-card p-4 text-card-foreground sm:p-5"
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
@@ -183,7 +194,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
               { value: "dynamic", label: t("type.dynamic") },
             ]}
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[0.8125rem] leading-5 text-subtle-foreground">
             {t(`type.note.${qrType}`)}
           </p>
           {banks.error ? <ApiErrorAlert error={banks.error} /> : null}
@@ -205,7 +216,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
             {(a) => (
               <input
                 {...a}
-                className={inputClass}
+                className={dataInputClass}
                 autoComplete="off"
                 inputMode="numeric"
                 value={params.account}
@@ -223,7 +234,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
               {(a) => (
                 <input
                   {...a}
-                  className={inputClass}
+                  className={dataInputClass}
                   autoComplete="off"
                   inputMode="numeric"
                   value={params.amount}
@@ -250,11 +261,8 @@ export function Studio({ initial }: { initial: StudioParams }) {
             )}
           </Field>
 
-          <details className="rounded-xl border border-dashed border-input bg-muted/40 p-3">
-            <summary className="cursor-pointer text-sm font-medium">
-              {t("advanced")}
-            </summary>
-            <div className="mt-3 space-y-4">
+          <Accordion summary={t("advanced")}>
+            <div className="space-y-4 pt-2">
               <Field label={t("fields.serviceType")}>
                 {(a) => (
                   <select
@@ -280,7 +288,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
                 {(a) => (
                   <input
                     {...a}
-                    className={inputClass}
+                    className={dataInputClass}
                     autoComplete="off"
                     value={params.billNumber}
                     onChange={(e) => set("billNumber", e.target.value)}
@@ -295,7 +303,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
                 {(a) => (
                   <input
                     {...a}
-                    className={inputClass}
+                    className={dataInputClass}
                     inputMode="numeric"
                     placeholder="500"
                     value={params.size}
@@ -316,7 +324,7 @@ export function Studio({ initial }: { initial: StudioParams }) {
                 )}
               </Field>
             </div>
-          </details>
+          </Accordion>
 
           <div className="space-y-2">
             <Button
@@ -329,7 +337,10 @@ export function Studio({ initial }: { initial: StudioParams }) {
               {t("generate")}
             </Button>
             {!valid ? (
-              <p id={hintId} className="text-xs text-muted-foreground">
+              <p
+                id={hintId}
+                className="text-[0.8125rem] leading-5 text-subtle-foreground"
+              >
                 {t("generateHint", { fields: missing.join(", ") })}
               </p>
             ) : null}

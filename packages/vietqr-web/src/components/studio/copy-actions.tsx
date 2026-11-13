@@ -80,7 +80,7 @@ export function CopyActions({
           </div>
           <p
             data-testid="embed-warning"
-            className="text-xs text-amber-700 dark:text-amber-400"
+            className="text-[0.8125rem] leading-5 text-warning-foreground"
           >
             {t("embedWarning")}
           </p>
